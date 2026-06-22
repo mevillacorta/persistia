@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Persistia · Demo 2026-1</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F4F0;--s0:#FFFFFF;--s1:#F0EFE9;--s2:#E6E4DC;
+  --ln:#E2DFDA;--ln2:#CCCAC0;
+  --t1:#18170F;--t2:#68665E;--t3:#A5A29A;
+  --g:#27A55A;--gs:#EDFAF3;--gt:#155832;
+  --r:#E03E22;--rs:#FEF0ED;--rt:#8B1A09;
+  --a:#D97706;--as:#FFF8E6;--at:#7A3B00;
+  --b:#2563EB;--bs:#EEF3FF;--bt:#1E3A8A;
+  --p:#7C3AED;--ps:#F5F2FF;--pt:#4B1D96;
+  --mono:'Geist Mono',monospace;--f:'Geist',system-ui,sans-serif;
+  --R:9px;--RL:13px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f);background:var(--bg);color:var(--t1);font-size:13px;line-height:1.5}
+.shell{display:flex;height:100vh}
+/* SIDEBAR */
+.sb{width:184px;background:var(--s0);border-right:1px solid var(--ln);display:flex;flex-direction:column;flex-shrink:0}
+.sb-logo{padding:14px 13px 11px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--ln)}
+.sb-mk{width:24px;height:24px;background:var(--t1);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-mk svg{width:12px;height:12px}
+.sb-nm{font-size:14px;font-weight:600;letter-spacing:-.3px}
+.sb-v{font-size:9px;font-family:var(--mono);color:var(--t3);background:var(--s1);padding:1px 6px;border-radius:3px;margin-left:auto}
+.sb-nav{flex:1;padding:8px 6px;overflow-y:auto}
+.sb-g{margin-bottom:14px}
+.sb-lbl{font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.09em;padding:0 8px;margin-bottom:3px}
+.sb-i{display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:7px;font-size:12px;color:var(--t2);cursor:pointer;transition:all .1s;user-select:none}
+.sb-i:hover{background:var(--s1);color:var(--t1)}
+.sb-i.on{background:var(--t1);color:#fff}
+.sb-i svg{width:13px;height:13px;flex-shrink:0;opacity:.5}
+.sb-i.on svg{opacity:1}
+.sb-badge{font-size:9px;font-weight:700;font-family:var(--mono);margin-left:auto;padding:1px 6px;border-radius:8px}
+.sb-red{background:var(--rs);color:var(--r)}
+.sb-dot{width:5px;height:5px;border-radius:50%;margin-left:auto;flex-shrink:0}
+.sb-ft{padding:9px 6px;border-top:1px solid var(--ln)}
+.sb-u{display:flex;align-items:center;gap:9px;padding:6px 9px;border-radius:7px;cursor:pointer}
+.sb-u:hover{background:var(--s1)}
+.av{width:26px;height:26px;border-radius:50%;background:var(--t1);color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0}
+.u-n{font-size:11.5px;font-weight:500}
+.u-r{font-size:9.5px;color:var(--t3)}
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+/* TOPBAR */
+.top{height:46px;background:var(--s0);border-bottom:1px solid var(--ln);display:flex;align-items:center;padding:0 18px;gap:10px;flex-shrink:0}
+.top-t{font-size:13px;font-weight:500;flex:1}
+.pill{font-size:9px;font-weight:600;font-family:var(--mono);padding:3px 8px;border-radius:4px;letter-spacing:.02em}
+.pg{background:var(--gs);color:var(--gt);border:1px solid #9FD9B8}
+.pa{background:var(--as);color:var(--at);border:1px solid #F0C070}
+.pn{background:var(--s1);color:var(--t2);border:1px solid var(--ln2)}
+.btn{font-size:11px;font-weight:500;padding:5px 13px;border-radius:7px;cursor:pointer;border:none;font-family:var(--f);transition:all .12s;display:inline-flex;align-items:center;gap:5px}
+.btn:active{transform:scale(.97)}
+.bg{background:var(--s1);color:var(--t2);border:1px solid var(--ln2)}.bg:hover{background:var(--s2);color:var(--t1)}
+.bd{background:var(--t1);color:#fff}.bd:hover{opacity:.85}
+.bn{background:var(--g);color:#fff}.bn:hover{background:#1F8A49}
+.btn-xs{font-size:10px;padding:3px 9px;border-radius:5px}
+/* VIEWS */
+.view{display:none;flex:1;overflow:hidden}
+.view.on{display:flex;flex-direction:column}
+/* KPI BAR */
+.kbar{display:flex;border-bottom:1px solid var(--ln);flex-shrink:0;background:var(--s0)}
+.kpi{flex:1;padding:10px 15px;border-right:1px solid var(--ln)}
+.kpi:last-child{border-right:none}
+.kl{font-size:9.5px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.kv{font-size:20px;font-weight:600;font-family:var(--mono);line-height:1;margin-bottom:2px}
+.kd{font-size:10px;color:var(--t3)}
+.kd.up{color:var(--g)}.kd.dn{color:var(--r)}
+.kvr{color:var(--r)}.kvg{color:var(--g)}.kvb{color:var(--b)}.kvd{color:var(--t1)}
+/* ORC */
+.orc{flex:1;display:flex;overflow:hidden}
+.queue{width:228px;border-right:1px solid var(--ln);display:flex;flex-direction:column;background:var(--s0);flex-shrink:0}
+.qh{padding:10px 12px 7px;border-bottom:1px solid var(--ln);display:flex;align-items:center;gap:8px}
+.qht{font-size:10px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;flex:1}
+.qcnt{font-size:9px;font-weight:700;font-family:var(--mono);background:var(--t1);color:#fff;padding:1px 7px;border-radius:8px}
+.qfilter{display:flex;gap:3px;padding:7px 7px 5px;border-bottom:1px solid var(--ln)}
+.qfb{font-size:9.5px;font-weight:500;padding:3px 8px;border-radius:5px;cursor:pointer;border:1px solid var(--ln);background:var(--s1);color:var(--t3);font-family:var(--f);transition:all .1s}
+.qfb.on{background:var(--t1);color:#fff;border-color:var(--t1)}
+.qlist{flex:1;overflow-y:auto;padding:7px 6px}
+.qlbl{font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;padding:6px 6px 3px}
+.qc{background:var(--s0);border:1px solid var(--ln);border-radius:9px;padding:9px 10px;margin-bottom:4px;cursor:pointer;position:relative;transition:all .1s}
+.qc:hover{border-color:var(--ln2)}
+.qc.on{border-color:var(--t1);background:#FAFAF7}
+.qc.done{opacity:.38;pointer-events:none}
+.rbadge{position:absolute;top:0;right:0;font-size:8px;font-weight:700;font-family:var(--mono);padding:2px 6px;border-radius:0 7px 0 5px;color:#fff}
+.rh{background:var(--r)}.rm{background:var(--a)}.rl-{background:var(--g)}
+.qrow{display:flex;align-items:center;gap:8px;margin-bottom:7px;padding-right:30px}
+.qav{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+.qname{font-size:12px;font-weight:600;color:var(--t1)}
+.qsub{font-size:9.5px;color:var(--t3)}
+.rb{height:2px;background:var(--s2);border-radius:1px;margin-bottom:6px;overflow:hidden}
+.rbf{height:100%;border-radius:1px}
+.rbh{background:var(--r)}.rbm{background:var(--a)}.rbg{background:var(--g)}
+.chips{display:flex;flex-wrap:wrap;gap:3px}
+.chip{font-size:9px;font-weight:500;padding:2px 6px;border-radius:3px}
+.cr{background:var(--rs);color:var(--rt)}.cy{background:var(--as);color:var(--at)}
+.cb{background:var(--bs);color:var(--bt)}.cg{background:var(--gs);color:var(--gt)}
+.cp{background:var(--ps);color:var(--pt)}
+/* DETAIL */
+.detail{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.det-body{flex:1;overflow-y:auto;padding:13px 14px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
+.card{background:var(--s0);border:1px solid var(--ln);border-radius:var(--RL);padding:14px}
+.pt{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.pnom{font-size:17px;font-weight:300;letter-spacing:-.3px;margin-bottom:3px}
+.pmeta{font-size:10.5px;color:var(--t3)}
+.psv{color:var(--g);font-weight:500}
+.rg{text-align:right}
+.rgn{font-size:26px;font-weight:600;font-family:var(--mono);line-height:1}
+.rgl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
+.srcs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:11px}
+.src{padding:8px 10px;border-radius:7px;border:1px solid var(--ln);background:var(--s1)}
+.src.alt{background:var(--rs);border-color:#F9B5A5}
+.sl{font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;display:flex;align-items:center;gap:4px}
+.sl.al{color:var(--rt)}
+.sdot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
+.sdg{background:var(--g)}.sdr{background:var(--r)}.sdn{background:var(--t3)}
+.stxt{font-size:10.5px;color:var(--t2);line-height:1.4}
+.diag{display:flex;gap:9px;align-items:flex-start;background:var(--s1);border-radius:7px;padding:10px 12px;border:1px solid var(--ln)}
+.dbar{width:2px;background:var(--t1);border-radius:1px;flex-shrink:0;align-self:stretch}
+.dlbl{font-size:9px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.dtxt{font-size:11px;color:var(--t2);line-height:1.55}
+.dhl{color:var(--t1);font-weight:600}
+/* NBA */
+.nbah{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.nbat{font-size:10px;font-weight:600;color:var(--g);text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:5px}
+.nbat svg{width:11px;height:11px}
+.chsw{display:flex;gap:3px}
+.chb{font-size:10px;font-weight:500;padding:3px 9px;border-radius:5px;cursor:pointer;border:1px solid var(--ln);background:var(--s1);color:var(--t2);font-family:var(--f);transition:all .1s}
+.chb.on{background:var(--t1);color:#fff;border-color:var(--t1)}
+.msgbx{background:var(--s1);border:1px solid var(--ln);border-radius:7px;padding:11px 13px;font-size:11.5px;color:var(--t2);line-height:1.65;margin-bottom:9px;white-space:pre-line;min-height:80px}
+.nbaff{display:flex;align-items:center;justify-content:space-between}
+.chinfo{font-size:10.5px;color:var(--t3)}
+/* AGENT */
+.agent{width:252px;border-left:1px solid var(--ln);display:flex;flex-direction:column;background:var(--s0);flex-shrink:0}
+.agh{padding:9px 12px;background:var(--t1);display:flex;align-items:center;gap:8px;flex-shrink:0}
+.agav{width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center}
+.agav svg{width:11px;height:11px}
+.agname{font-size:12px;font-weight:500;color:#fff}
+.agctx{font-size:9px;color:rgba(255,255,255,.45)}
+.agst{margin-left:auto;display:flex;align-items:center;gap:4px;font-size:9px;color:rgba(255,255,255,.5)}
+.agstd{width:5px;height:5px;border-radius:50%;background:#4ADE80;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.agmsgs{flex:1;padding:9px 8px;display:flex;flex-direction:column;gap:7px;overflow-y:auto;background:var(--bg)}
+.mu{align-self:flex-end;background:var(--t1);color:#fff;padding:7px 10px;border-radius:12px 12px 3px 12px;font-size:11px;max-width:90%;line-height:1.4}
+.ma{align-self:flex-start;background:var(--s0);color:var(--t2);padding:7px 10px;border-radius:12px 12px 12px 3px;font-size:11px;max-width:92%;border:1px solid var(--ln);line-height:1.5}
+.ma b{color:var(--t1);font-weight:600}
+.tr{display:flex;align-items:center;gap:4px;font-size:9.5px;color:var(--t3);font-family:var(--mono)}
+.td{width:4px;height:4px;border-radius:50%;flex-shrink:0;background:var(--g)}
+.agqb{padding:7px 8px;border-top:1px solid var(--ln);display:flex;flex-wrap:wrap;gap:3px;background:var(--s1)}
+.qb{font-size:9.5px;font-weight:500;padding:3px 8px;background:var(--s0);color:var(--t2);border:1px solid var(--ln);border-radius:5px;cursor:pointer;font-family:var(--f);transition:all .1s}
+.qb:hover{background:var(--t1);color:#fff;border-color:var(--t1)}
+.aginp{padding:7px 8px;border-top:1px solid var(--ln);display:flex;gap:5px;background:var(--s0)}
+.agin{flex:1;border:1px solid var(--ln);border-radius:7px;padding:5px 9px;font-size:11px;outline:none;background:var(--s1);color:var(--t1);font-family:var(--f)}
+.agin:focus{border-color:var(--t1);background:var(--s0)}
+.agsend{width:28px;height:28px;background:var(--t1);border:none;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.agsend svg{width:11px;height:11px}
+/* DASHBOARDS */
+.dash{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
+.dash2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.dcard{background:var(--s0);border:1px solid var(--ln);border-radius:var(--RL);padding:14px}
+.dctit{font-size:12px;font-weight:500;color:var(--t1);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.dsub{font-size:9.5px;color:var(--t3);font-weight:400}
+.funrow{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.funl{font-size:10.5px;color:var(--t2);width:130px;flex-shrink:0}
+.funbw{flex:1;height:5px;background:var(--s2);border-radius:3px;overflow:hidden}
+.funb{height:100%;border-radius:3px;transition:width .5s}
+.funn{font-size:10px;font-family:var(--mono);color:var(--t3);width:90px;text-align:right}
+.mt{width:100%;border-collapse:collapse}
+.mt th{text-align:left;padding:5px 0;font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--ln)}
+.mt td{padding:6px 0;font-size:11px;color:var(--t2);border-bottom:1px solid var(--ln)}
+.mt tr:last-child td{border-bottom:none}
+.sdotd{width:5px;height:5px;border-radius:50%;display:inline-block;margin-right:5px;flex-shrink:0}
+.bch{display:flex;gap:10px;align-items:flex-end;height:90px;padding-top:8px;margin-bottom:8px}
+.bcc{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bcs{width:100%;display:flex;flex-direction:column;gap:1px;border-radius:3px 3px 0 0;overflow:hidden}
+.bseg{transition:height .4s}
+.bcl{font-size:8.5px;color:var(--t3);text-align:center;line-height:1.3}
+.bleg{display:flex;gap:12px;font-size:9.5px;color:var(--t3)}
+.bleg span{display:flex;align-items:center;gap:4px}
+.bl{width:8px;height:8px;border-radius:2px}
+/* SEGMENTOS */
+.segv{flex:1;display:flex;overflow:hidden}
+.seglist{width:220px;border-right:1px solid var(--ln);padding:9px 6px;overflow-y:auto;background:var(--s0);flex-shrink:0}
+.segdet{flex:1;overflow-y:auto;padding:13px 14px;background:var(--bg);display:flex;flex-direction:column;gap:10px}
+.sgc{background:var(--s0);border:1px solid var(--ln);border-radius:8px;padding:9px 11px;margin-bottom:4px;cursor:pointer;transition:all .1s}
+.sgc:hover{border-color:var(--ln2)}
+.sgc.on{background:var(--s1);border-color:var(--ln2)}
+.sgname{font-size:12px;font-weight:500;color:var(--t1);margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.sgdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sgmeta{font-size:10px;color:var(--t3)}
+/* CONFIG */
+.cfgv{flex:1;display:flex;overflow:hidden}
+.cfgnav{width:184px;border-right:1px solid var(--ln);background:var(--s0);flex-shrink:0;padding:10px 6px;display:flex;flex-direction:column;gap:1px;overflow-y:auto}
+.cnlbl{font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.09em;padding:8px 8px 3px}
+.cni{display:flex;align-items:center;gap:7px;padding:6px 9px;border-radius:7px;font-size:11.5px;color:var(--t2);cursor:pointer;transition:all .1s;position:relative}
+.cni:hover{background:var(--s1);color:var(--t1)}
+.cni.on{background:var(--s1);color:var(--t1);font-weight:500}
+.cni.on::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:2px;background:var(--t1);border-radius:1px}
+.cni svg{width:13px;height:13px;flex-shrink:0;opacity:.5}
+.cni.on svg{opacity:1}
+.cfgbody{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--bg)}
+.panel{background:var(--s0);border:1px solid var(--ln);border-radius:var(--RL);overflow:hidden}
+.ph{padding:12px 16px;border-bottom:1px solid var(--ln);display:flex;align-items:center;gap:10px}
+.phtit{font-size:13px;font-weight:500;flex:1}
+.phsub{font-size:10.5px;color:var(--t3);margin-top:1px}
+.pb{padding:16px}
+.sh{font-size:9.5px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.sh::after{content:'';flex:1;height:1px;background:var(--ln)}
+/* Benefits grid */
+.bengrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.benc{border:1px solid var(--ln);border-radius:9px;padding:12px 13px;background:var(--s0);position:relative}
+.benc.on{border-color:var(--t1)}
+.bctop{display:flex;align-items:flex-start;gap:9px;margin-bottom:9px}
+.bcico{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bcico svg{width:13px;height:13px}
+.bcig{background:var(--gs);color:var(--g)}.bcib{background:var(--bs);color:var(--b)}.bcip{background:var(--ps);color:var(--p)}.bciy{background:var(--as);color:var(--a)}.bcir{background:var(--rs);color:var(--r)}
+.bcname{font-size:12px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.bcsub{font-size:10px;color:var(--t3);line-height:1.35}
+.bcdot{width:7px;height:7px;border-radius:50%;margin-left:auto;flex-shrink:0;margin-top:3px}
+.bcrules{display:flex;flex-direction:column;gap:5px;margin-top:4px}
+.rr{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--t2)}
+.rl{color:var(--t3);width:80px;flex-shrink:0;font-size:10px}
+.rv{font-family:var(--mono);font-size:10.5px;color:var(--t1);background:var(--s1);padding:3px 8px;border-radius:4px;border:1px solid var(--ln)}
+/* Matrix */
+.mx{display:grid;grid-template-columns:150px repeat(3,1fr);gap:1px;background:var(--ln);border:1px solid var(--ln);border-radius:var(--R);overflow:hidden}
+.mxh{background:var(--s1);padding:7px 10px;font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:center;text-align:center}
+.mxrl{background:var(--s1);padding:8px 11px;font-weight:500;color:var(--t1);font-size:11px;display:flex;align-items:center}
+.mxc{background:var(--s0);padding:7px 8px;display:flex;align-items:center;justify-content:center}
+.mchip{font-size:9px;font-weight:600;padding:3px 8px;border-radius:4px;width:100%;text-align:center}
+.mcg{background:var(--gs);color:var(--gt)}.mca{background:var(--as);color:var(--at)}.mcr{background:var(--rs);color:var(--rt)}.mcn{background:var(--s2);color:var(--t3)}
+/* Channels */
+.chgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.chcard{border:1px solid var(--ln);border-radius:var(--RL);overflow:hidden;background:var(--s0)}
+.cchh{padding:11px 14px;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--ln)}
+.cchico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.cchn{font-size:12.5px;font-weight:600;color:var(--t1)}
+.ccht{font-size:10px;color:var(--t3)}
+.cchst{margin-left:auto;display:flex;align-items:center;gap:4px;font-size:10px;font-weight:500}
+.stg{color:var(--gt)}.str{color:var(--rt)}.sta{color:var(--at)}
+.stdt{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.stdtg{background:var(--g)}.stdtr{background:var(--r)}.stdta{background:var(--a)}
+.ccb{padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.flbl{font-size:9.5px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
+.fval{font-size:11.5px;color:var(--t1);font-family:var(--mono);background:var(--s1);padding:5px 9px;border-radius:5px;border:1px solid var(--ln)}
+.chlims{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:3px}
+.cli{background:var(--s1);border-radius:5px;padding:6px 8px}
+.cll{font-size:9px;color:var(--t3);margin-bottom:3px}
+.clv{font-size:11px;font-family:var(--mono);color:var(--t1)}
+/* Rules */
+.rllist{display:flex;flex-direction:column;gap:5px}
+.rli{display:flex;align-items:center;gap:9px;padding:9px 12px;background:var(--s0);border:1px solid var(--ln);border-radius:8px}
+.rldr{color:var(--t3);font-size:14px;flex-shrink:0}
+.rlinfo{flex:1;min-width:0}
+.rlname{font-size:11.5px;font-weight:500;color:var(--t1);margin-bottom:2px}
+.rlcond{font-size:10px;color:var(--t3);font-family:var(--mono)}
+.rlw{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.rwbar{width:55px;height:3px;background:var(--s2);border-radius:2px;overflow:hidden}
+.rwf{height:100%;border-radius:2px;background:var(--t1)}
+.rwv{font-size:10px;font-family:var(--mono);color:var(--t2);min-width:28px;text-align:right}
+/* Integrations */
+.inti{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--ln)}
+.inti:last-child{border-bottom:none}
+.intico{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;border:1px solid var(--ln)}
+.intinfo{flex:1;min-width:0}
+.intname{font-size:12px;font-weight:500;color:var(--t1);margin-bottom:1px}
+.intdesc{font-size:10px;color:var(--t3)}
+.intst{display:flex;align-items:center;gap:4px;font-size:10px;margin-right:6px}
+.intbtn{font-size:9.5px;font-weight:600;padding:3px 10px;border-radius:5px;cursor:pointer;border:1px solid var(--ln2);background:var(--s1);color:var(--t2);font-family:var(--f);transition:all .12s}
+.intbtn:hover{background:var(--t1);color:#fff;border-color:var(--t1)}
+.intbtn.conn{background:var(--gs);color:var(--gt);border-color:#9FD9B8}
+/* Misc */
+.tog{width:30px;height:17px;background:var(--ln2);border-radius:9px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.tog.on{background:var(--t1)}
+.tog::after{content:'';position:absolute;width:13px;height:13px;background:#fff;border-radius:50%;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.tog.on::after{transform:translateX(13px)}
+.togrow{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--ln)}
+.togrow:last-child{border-bottom:none}
+.toginfo{flex:1;margin-right:12px}
+.togname{font-size:11.5px;font-weight:500;color:var(--t1);margin-bottom:1px}
+.togdesc{font-size:10px;color:var(--t3)}
+.tag{font-size:9px;font-weight:600;padding:2px 6px;border-radius:3px}
+.tgr{background:var(--rs);color:var(--rt)}.tgg{background:var(--gs);color:var(--gt)}
+.tgy{background:var(--as);color:var(--at)}.tgb{background:var(--bs);color:var(--bt)}
+.dtable{width:100%;border-collapse:collapse;font-size:10.5px}
+.dtable th{text-align:left;padding:6px 9px;font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--ln);background:var(--s1);white-space:nowrap}
+.dtable td{padding:6px 9px;border-bottom:1px solid var(--ln);color:var(--t2);white-space:nowrap}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--s1)}
+.toast{position:fixed;bottom:18px;right:18px;background:var(--t1);color:#fff;font-size:11.5px;font-weight:500;padding:9px 14px;border-radius:8px;display:flex;align-items:center;gap:7px;opacity:0;transform:translateY(6px);transition:all .22s;pointer-events:none;z-index:999}
+.toast.show{opacity:1;transform:translateY(0)}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--ln2);border-radius:2px}
+
+/* ─ MOTOR DE DATOS ─ */
+.de{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.desteps{display:flex;align-items:stretch;background:var(--s0);border-bottom:1px solid var(--ln);flex-shrink:0;height:44px}
+.ds{flex:1;display:flex;align-items:center;gap:8px;padding:0 14px;border-right:1px solid var(--ln);cursor:default}
+.ds:last-child{border-right:none}
+.dsn{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:var(--mono);flex-shrink:0}
+.dn-p{background:var(--s2);color:var(--t3)}.dn-a{background:var(--t1);color:#fff}.dn-d{background:var(--gs);color:var(--gt);border:1px solid #9FD9B8}
+.dst{font-size:11px;font-weight:500}
+.ds.pend .dst{color:var(--t3)}.ds.act .dst{color:var(--t1)}.ds.done .dst{color:var(--gt)}
+.debody{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;background:var(--bg)}
+/* upload */
+.upgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.upc{background:var(--s0);border:1px solid var(--ln);border-radius:var(--RL);padding:12px;transition:border-color .15s}
+.upc.done{border-color:#9FD9B8}
+.uph{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.upico{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.upico svg{width:13px;height:13px}
+.uib{background:var(--bs);color:var(--b)}.uiy{background:var(--as);color:var(--a)}.uip{background:var(--ps);color:var(--p)}
+.upname{font-size:12px;font-weight:600;color:var(--t1)}.upsub{font-size:10px;color:var(--t3)}
+.drop{border:1.5px dashed var(--ln2);border-radius:7px;padding:14px;text-align:center;cursor:pointer;transition:all .15s;position:relative}
+.drop:hover{border-color:var(--t1);background:var(--s1)}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.drop svg{width:20px;height:20px;color:var(--t3);margin-bottom:5px}
+.droptxt{font-size:10.5px;color:var(--t3)}
+.droptxt span{color:var(--t1);font-weight:500}
+.fp{display:none;margin-top:7px;background:var(--s1);border-radius:6px;padding:8px 10px}
+.fp.show{display:block}
+.fprow{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.fpnm{font-size:10.5px;font-weight:500;color:var(--t1);flex:1}
+.fpsz{font-size:9.5px;color:var(--t3);font-family:var(--mono)}
+.pbar{height:2px;background:var(--ln);border-radius:1px;overflow:hidden;margin-bottom:4px}
+.pbf{height:100%;border-radius:1px}
+.fperr{font-size:9.5px;font-family:var(--mono);background:var(--as);color:var(--at);padding:2px 7px;border-radius:3px;display:inline-block}
+/* issues */
+.isspanel{background:var(--s0);border:1px solid var(--ln);border-radius:var(--RL);overflow:hidden}
+.issh{padding:9px 13px;border-bottom:1px solid var(--ln);display:flex;align-items:center;gap:8px;background:var(--s1)}
+.isstitle{font-size:12px;font-weight:500;color:var(--t1);flex:1}
+.irow{display:flex;align-items:flex-start;gap:9px;padding:9px 13px;border-bottom:1px solid var(--ln);transition:background .1s}
+.irow:hover{background:var(--s1)}.irow:last-child{border-bottom:none}.irow.fixed{opacity:.35}
+.iico{width:17px;height:17px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:1px}
+.iir{background:var(--rs)}.iiy{background:var(--as)}.iib{background:var(--bs)}
+.ibody{flex:1;min-width:0}
+.ittl{font-size:11.5px;font-weight:500;color:var(--t1);margin-bottom:1px}
+.idesc{font-size:10px;color:var(--t3);line-height:1.4}
+.iact{font-size:10px;font-weight:600;padding:3px 9px;border-radius:5px;cursor:pointer;border:none;font-family:var(--f);flex-shrink:0;margin-top:1px;transition:all .1s}
+.iar{background:var(--rs);color:var(--rt)}.iag{background:var(--gs);color:var(--gt)}
+/* log + compare */
+.logsh{background:var(--s0);border:1px solid var(--ln);border-radius:var(--RL);overflow:hidden;font-family:var(--mono)}
+.logh{padding:7px 12px;border-bottom:1px solid var(--ln);background:var(--s1);display:flex;align-items:center;gap:8px}
+.logt{font-size:10px;font-weight:500;color:var(--t2);flex:1}
+.loglive{display:flex;align-items:center;gap:4px;font-size:9px;color:var(--gt)}
+.logdot{width:5px;height:5px;border-radius:50%;background:var(--g);animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.logbody{padding:7px 0;max-height:160px;overflow-y:auto}
+.ll{display:flex;align-items:baseline;gap:7px;padding:2px 12px;font-size:10px;animation:fup .2s ease}
+@keyframes fup{from{opacity:0;transform:translateY(2px)}to{opacity:1;transform:none}}
+.lt{color:var(--t3);min-width:54px}.ls{min-width:38px}
+.lsa{color:var(--bt)}.lsf{color:var(--at)}.lsc{color:var(--pt)}.lse{color:var(--t1);font-weight:500}
+.ltp{min-width:44px;font-size:9.5px}
+.ler{color:var(--rt)}.lwn{color:var(--at)}.lfx{color:var(--gt)}.lin{color:var(--bt)}.lmg{color:var(--pt)}
+.lm{color:var(--t2);flex:1}
+/* compare */
+.cmp{display:grid;grid-template-columns:1fr 28px 1fr;background:var(--s0);border:1px solid var(--ln);border-radius:var(--RL);overflow:hidden}
+.cmph{padding:8px 13px;border-bottom:1px solid var(--ln);display:flex;align-items:center;gap:7px;background:var(--s1)}
+.cmpdot{width:7px;height:7px;border-radius:50%}
+.cmptitle{font-size:11px;font-weight:500}
+.cmpcnt{margin-left:auto;font-size:9.5px;color:var(--t3);font-family:var(--mono)}
+.cmpbody{padding:11px 13px}
+.fr{display:flex;flex-direction:column;gap:2px;margin-bottom:7px}
+.frl{font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
+.frv{font-size:10.5px;font-family:var(--mono);padding:3px 7px;border-radius:4px;border:1px solid var(--ln);background:var(--s1);color:var(--t2)}
+.frv.dirty{color:var(--rt);background:var(--rs);border-color:#F9B5A5;text-decoration:line-through}
+.frv.clean{color:var(--gt);background:var(--gs);border-color:#9FD9B8}
+.frv.merged{color:var(--bt);background:var(--bs);border-color:#BFDBFE}
+.cmparr{display:flex;align-items:center;justify-content:center;background:var(--s1);border-left:1px solid var(--ln);border-right:1px solid var(--ln);font-size:14px;color:var(--t3)}
+/* results */
+.resgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.rkcard{background:var(--s0);border:1px solid var(--ln);border-radius:var(--R);padding:11px 13px}
+.rkl{font-size:9.5px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.rkv{font-size:20px;font-weight:600;font-family:var(--mono);line-height:1;margin-bottom:2px}
+.rkd{font-size:10px;color:var(--t3)}
+/* data table */
+.dtw{background:var(--s0);border:1px solid var(--ln);border-radius:var(--RL);overflow:hidden}
+.dth{padding:8px 13px;border-bottom:1px solid var(--ln);display:flex;align-items:center;gap:8px;background:var(--s1)}
+.dtlbl{font-size:10px;font-weight:500;color:var(--t2);flex:1}
+.cc{font-family:var(--mono);font-size:9.5px;color:var(--t2)}
+.cd{font-family:var(--mono);font-size:9.5px;background:var(--rs);color:var(--rt);padding:1px 5px;border-radius:3px}
+.cw{font-family:var(--mono);font-size:9.5px;background:var(--as);color:var(--at);padding:1px 5px;border-radius:3px}
+.cf{font-family:var(--mono);font-size:9.5px;background:var(--gs);color:var(--gt);padding:1px 5px;border-radius:3px}
+.cn{font-family:var(--mono);font-size:9.5px;background:var(--bs);color:var(--bt);padding:1px 5px;border-radius:3px}
+/* action bar */
+.abar{display:flex;align-items:center;gap:11px;background:var(--s0);border:1px solid var(--ln);border-radius:var(--RL);padding:11px 15px}
+.abico{width:26px;height:26px;background:var(--s1);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.abico svg{width:13px;height:13px;color:var(--t1)}
+.abtxt{flex:1}
+.abtit{font-size:12px;font-weight:500;color:var(--t1);margin-bottom:1px}
+.absub{font-size:10px;color:var(--t3)}
+
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ═══ SIDEBAR ═══ -->
+<div class="sb">
+  <div class="sb-logo">
+    <div class="sb-mk"><svg fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
+    <span class="sb-nm">Persistia</span>
+    <span class="sb-v">2026-1</span>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-g">
+      <div class="sb-lbl">Datos</div>
+      <div class="sb-i" onclick="go('data',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>Motor de datos<span class="sb-dot" style="background:var(--a)"></span></div>
+      <div class="sb-lbl" style="margin-top:10px">Retención</div>
+      <div class="sb-i on" onclick="go('orc',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>Orquestación NBA<span class="sb-badge sb-red" id="sb-pend">8</span></div>
+      <div class="sb-i" onclick="go('seg',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Segmentos</div>
+      <div class="sb-i" onclick="go('dash',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Dashboards</div>
+    </div>
+    <div class="sb-g">
+      <div class="sb-lbl">Sistema</div>
+      <div class="sb-i" onclick="go('cfg',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Configuración<span class="sb-dot" style="background:var(--g)"></span></div>
+    </div>
+  </nav>
+  <div class="sb-ft">
+    <div class="sb-u"><div class="av">MV</div><div><div class="u-n">Mario Villacorta</div><div class="u-r">Retention Manager · UPC</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <div class="top">
+    <span class="top-t" id="vt">Orquestación NBA</span>
+    <span class="pill pg" id="vp">CICLO 2026-1 ACTIVO</span>
+    <span style="font-size:9.5px;color:var(--t3);font-family:var(--mono)">UPC · Lima</span>
+    <button class="btn bd btn-xs" id="cta">+ Nueva campaña</button>
+  </div>
+
+  <!-- KPI BAR -->
+  <div class="kbar" id="kbar">
+    <div class="kpi"><div class="kl">Alerta de deserción</div><div class="kv kvr">47</div><div class="kd dn">↑ +6 vs semana anterior</div></div>
+    <div class="kpi"><div class="kl">Sin gestionar</div><div class="kv kvd">8</div><div class="kd">prioridad ALTO en bandeja</div></div>
+    <div class="kpi"><div class="kl">Tasa de retención</div><div class="kv kvg">91.4%</div><div class="kd up">↑ +4.1% vs 2025-2</div></div>
+    <div class="kpi"><div class="kl">Ingreso recuperado</div><div class="kv kvg">S/ 312K</div><div class="kd up">104 matriculados ciclo</div></div>
+  </div>
+
+<!-- ═══ ORQUESTACIÓN ═══ -->
+<div class="view on" id="v-orc">
+  <div class="orc">
+    <!-- QUEUE -->
+    <div class="queue">
+      <div class="qh"><span class="qht">Bandeja · Hoy</span><span class="qcnt" id="q-total">20</span></div>
+      <div class="qfilter">
+        <button class="qfb on" onclick="filtQ('todos',this)">Todos</button>
+        <button class="qfb" onclick="filtQ('ALTO',this)">ALTO</button>
+        <button class="qfb" onclick="filtQ('MEDIO',this)">MEDIO</button>
+      </div>
+      <div class="qlist" id="qlist"></div>
+    </div>
+    <!-- DETAIL -->
+    <div class="detail">
+      <div class="det-body" id="det-body">
+        <div style="padding:40px;text-align:center;color:var(--t3);font-size:11px">Selecciona un estudiante de la cola</div>
+      </div>
+    </div>
+    <!-- AGENT -->
+    <div class="agent">
+      <div class="agh">
+        <div class="agav"><svg fill="none" stroke="white" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
+        <div><div class="agname">Persista</div><div class="agctx" id="ag-ctx">Selecciona un caso</div></div>
+        <div class="agst"><div class="agstd"></div>activo</div>
+      </div>
+      <div class="agmsgs" id="agmsgs">
+        <div class="ma">Hola. Soy Persista, tu copiloto de retención.<br><br>Selecciona un estudiante de la cola y analizaré su perfil 360 para recomendarte la mejor acción.</div>
+      </div>
+      <div class="agqb" id="agqb" style="display:none">
+        <button class="qb" onclick="agResp('plan_b')">Plan B</button>
+        <button class="qb" onclick="agResp('historial')">Historial</button>
+        <button class="qb" onclick="agResp('similares')">Similares</button>
+        <button class="qb" onclick="agResp('escalacion')">Escalar</button>
+      </div>
+      <div class="aginp">
+        <input class="agin" id="agin" placeholder="Escribe o selecciona una acción..." onkeydown="if(event.key==='Enter')agSend()">
+        <button class="agsend" onclick="agSend()"><svg fill="none" stroke="white" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MOTOR DE DATOS ═══ -->
+<div class="view" id="v-data">
+  <div class="de">
+    <div class="desteps">
+      <div class="ds act" id="ds1"><div class="dsn dn-a">1</div><div class="dst">Subir archivos</div></div>
+      <div class="ds pend" id="ds2"><div class="dsn dn-p">2</div><div class="dst">Diagnóstico y limpieza</div></div>
+      <div class="ds pend" id="ds3"><div class="dsn dn-p">3</div><div class="dst">Base lista</div></div>
+    </div>
+    <div class="debody">
+
+      <!-- PASO 1: UPLOAD -->
+      <div id="de-p1">
+        <div class="upgrid">
+          <div class="upc" id="uc-a">
+            <div class="uph">
+              <div class="upico uib"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg></div>
+              <div><div class="upname">Académico · SIA</div><div class="upsub">Notas, asistencia, matrícula, PP</div></div>
+            </div>
+            <div class="drop" onclick="simUpload('a')">
+              <input type="file" accept=".xlsx,.csv">
+              <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+              <div class="droptxt"><span>Seleccionar</span> o arrastra · .xlsx, .csv</div>
+            </div>
+            <div class="fp" id="fp-a">
+              <div class="fprow"><span>📊</span><span class="fpnm">academico_2026_1.xlsx</span><span class="fpsz">2.4 MB</span></div>
+              <div class="pbar"><div class="pbf" id="pb-a" style="background:var(--b);width:0%"></div></div>
+              <div class="fperr" id="fe-a" style="display:none">⚠ 234 problemas detectados</div>
+            </div>
+          </div>
+          <div class="upc" id="uc-f">
+            <div class="uph">
+              <div class="upico uiy"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+              <div><div class="upname">Financiero · SAP</div><div class="upsub">Deuda de pensión, cuotas, becas</div></div>
+            </div>
+            <div class="drop" onclick="simUpload('f')">
+              <input type="file" accept=".xlsx,.csv">
+              <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+              <div class="droptxt"><span>Seleccionar</span> o arrastra · .xlsx, .csv</div>
+            </div>
+            <div class="fp" id="fp-f">
+              <div class="fprow"><span>💰</span><span class="fpnm">finanzas_sap_2026_1.xlsx</span><span class="fpsz">1.8 MB</span></div>
+              <div class="pbar"><div class="pbf" id="pb-f" style="background:var(--a);width:0%"></div></div>
+              <div class="fperr" id="fe-f" style="display:none">⚠ 187 problemas detectados</div>
+            </div>
+          </div>
+          <div class="upc" id="uc-c">
+            <div class="uph">
+              <div class="upico uip"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/></svg></div>
+              <div><div class="upname">CRM · Tickets y contactos</div><div class="upsub">Solicitudes, historial de gestión</div></div>
+            </div>
+            <div class="drop" onclick="simUpload('c')">
+              <input type="file" accept=".xlsx,.csv">
+              <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+              <div class="droptxt"><span>Seleccionar</span> o arrastra · .xlsx, .csv</div>
+            </div>
+            <div class="fp" id="fp-c">
+              <div class="fprow"><span>📋</span><span class="fpnm">crm_ciclo_2026_1.xlsx</span><span class="fpsz">3.1 MB</span></div>
+              <div class="pbar"><div class="pbf" id="pb-c" style="background:var(--p);width:0%"></div></div>
+              <div class="fperr" id="fe-c" style="display:none">⚠ 98 problemas detectados</div>
+            </div>
+          </div>
+        </div>
+        <div class="abar" id="de-cta-bar" style="display:none">
+          <div class="abico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+          <div class="abtxt">
+            <div class="abtit">3 archivos listos · 8,490 filas · 519 problemas detectados</div>
+            <div class="absub">SIA (3,214 reg.) + SAP (3,214 reg.) + CRM (2,062 tickets) — listo para diagnóstico</div>
+          </div>
+          <button class="btn bd btn-xs" onclick="runDiag()">Diagnosticar y limpiar →</button>
+        </div>
+      </div>
+
+      <!-- PASO 2: DIAGNÓSTICO -->
+      <div id="de-p2" style="display:none">
+        <div class="dtw">
+          <div class="dth"><span class="dtlbl">Muestra de datos brutos · SIA 2026-1</span><span class="tag tgr">519 errores</span><span class="tag tgy" style="margin-left:4px">312 advertencias</span></div>
+          <div style="overflow-x:auto">
+            <table class="dtable">
+              <thead><tr><th>cod_alumno</th><th>apellidos_nombres</th><th>cod_carrera</th><th>promedio_pond</th><th>pct_asistencia</th><th>fec_matricula</th><th>ind_beca</th></tr></thead>
+              <tbody>
+                <tr><td class="cd">8472910×2</td><td class="cc">ROJAS GARCIA, CAMILA</td><td class="cc">IS</td><td class="cd">23.5</td><td class="cc">65</td><td class="cd">15/03/26</td><td class="cw">SI</td></tr>
+                <tr><td class="cd">7391024×2</td><td class="cd">SILVA R., MATEO</td><td class="cc">DE</td><td class="cc">14.2</td><td class="cd">110%</td><td class="cc">2026-03-01</td><td class="cw">Yes</td></tr>
+                <tr><td class="cc">6284751</td><td class="cd">FERN√NDEZ D., LUC√A</td><td class="cw">MED HUMANA</td><td class="cc">16.8</td><td class="cc">95</td><td class="cc">2026-03-01</td><td class="cc">Sí</td></tr>
+                <tr><td class="cd">ID-483726</td><td class="cc">QUISPE MAMANI, FIORELLA</td><td class="cc">AN</td><td class="cd">—</td><td class="cw">48.0%</td><td class="cc">2026-03-01</td><td class="cw">N/A</td></tr>
+                <tr><td class="cc">5192847</td><td class="cc">APAZA CONDORI, GIANCARLO</td><td class="cd">CONT Y FIN</td><td class="cc">13.1</td><td class="cc">72</td><td class="cc">2026-03-01</td><td class="cc">No</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="isspanel">
+          <div class="issh"><span class="isstitle">Problemas detectados · SIA + SAP + CRM</span><span class="tag tgr">519 críticos</span><span class="tag tgy" style="margin-left:4px">312 advertencias</span></div>
+          <div class="irow" id="i1"><div class="iico iir">🔴</div><div class="ibody"><div class="ittl">43 cod_alumno duplicados en SIA</div><div class="idesc">Registros con mismo código e información inconsistente. Se conserva la fila más completa y reciente.</div></div><button class="iact iar" onclick="fixIssue(this,'i1')">Auto-corregir</button></div>
+          <div class="irow" id="i2"><div class="iico iir">🔴</div><div class="ibody"><div class="ittl">28 valores de promedio_ponderado fuera de rango (escala 0–20)</div><div class="idesc">Valores como 23.5 detectados. Se corrige con fila duplicada válida o se marca como NULL para revisión manual.</div></div><button class="iact iar" onclick="fixIssue(this,'i2')">Auto-corregir</button></div>
+          <div class="irow" id="i3"><div class="iico iir">🔴</div><div class="ibody"><div class="ittl">67 nombres con encoding roto (ISO-8859-1 → UTF-8)</div><div class="idesc">"FERN√NDEZ" → "FERNÁNDEZ", "LUC√A" → "LUCÍA". Exportación legacy del SIA normalizada a UTF-8.</div></div><button class="iact iar" onclick="fixIssue(this,'i3')">Auto-corregir</button></div>
+          <div class="irow" id="i4"><div class="iico iiy">🟡</div><div class="ibody"><div class="ittl">6 formatos de fecha distintos en fec_matricula</div><div class="idesc">"15/03/26", "2026-03-01", timestamp Unix EPOCH — todo normalizado a ISO 8601 (YYYY-MM-DD).</div></div><button class="iact iar" onclick="fixIssue(this,'i4')">Auto-corregir</button></div>
+          <div class="irow" id="i5"><div class="iico iiy">🟡</div><div class="ibody"><div class="ittl">8 variantes del campo ind_beca en SAP</div><div class="idesc">SI / Yes / 1 / True / S / N/A / SÍ / Sí → normalizado a boolean true/false para cruce con SIA.</div></div><button class="iact iar" onclick="fixIssue(this,'i5')">Auto-corregir</button></div>
+          <div class="irow" id="i6"><div class="iico iiy">🟡</div><div class="ibody"><div class="ittl">22 variantes de cod_carrera no mapeadas al catálogo oficial</div><div class="idesc">"IS", "Ing. Sistemas", "ING SIS", "MED HUMANA" → mapeado a catálogo oficial de 8 programas académicos.</div></div><button class="iact iar" onclick="fixIssue(this,'i6')">Auto-corregir</button></div>
+          <div class="irow" id="i7"><div class="iico iib">🔵</div><div class="ibody"><div class="ittl">312 registros CRM sin cod_alumno válido para cruce</div><div class="idesc">Tickets con número de DNI en lugar de código alumno. Match fuzzy por apellidos + carrera resuelve 287 de 312.</div></div><button class="iact iar" onclick="fixIssue(this,'i7')">Match fuzzy</button></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <div class="logsh" style="flex:1">
+            <div class="logh"><span class="logt">Log de transformaciones · Pipeline ETL</span><div class="loglive"><div class="logdot"></div>procesando</div></div>
+            <div class="logbody" id="de-log"></div>
+          </div>
+          <div class="cmp" style="flex:1.1">
+            <div>
+              <div class="cmph"><div class="cmpdot" style="background:var(--r)"></div><span class="cmptitle" style="color:var(--rt)">Datos brutos · SIA</span><span class="cmpcnt">519 errores</span></div>
+              <div class="cmpbody">
+                <div class="fr"><div class="frl">cod_alumno</div><div class="frv dirty">8472910 (duplicado ×2)</div></div>
+                <div class="fr"><div class="frl">apellidos_nombres</div><div class="frv dirty">FERN√NDEZ LUC√A</div></div>
+                <div class="fr"><div class="frl">promedio_ponderado</div><div class="frv dirty">23.5 (fuera de rango)</div></div>
+                <div class="fr"><div class="frl">pct_asistencia</div><div class="frv dirty">110% (inválido)</div></div>
+                <div class="fr"><div class="frl">ind_beca</div><div class="frv dirty">Yes / SI / 1 / True</div></div>
+                <div class="fr"><div class="frl">deuda_pension</div><div class="frv dirty">NULL (sin cruce SAP)</div></div>
+              </div>
+            </div>
+            <div class="cmparr">→</div>
+            <div>
+              <div class="cmph"><div class="cmpdot" style="background:var(--g)"></div><span class="cmptitle" style="color:var(--gt)">Datos limpios · Unificado</span><span class="cmpcnt">0 críticos</span></div>
+              <div class="cmpbody">
+                <div class="fr"><div class="frl">cod_alumno</div><div class="frv clean">8472910 (único)</div></div>
+                <div class="fr"><div class="frl">apellidos_nombres</div><div class="frv clean">FERNÁNDEZ, LUCÍA</div></div>
+                <div class="fr"><div class="frl">promedio_ponderado</div><div class="frv clean">12.5 (corregido)</div></div>
+                <div class="fr"><div class="frl">pct_asistencia</div><div class="frv clean">65.0</div></div>
+                <div class="fr"><div class="frl">ind_beca</div><div class="frv clean">false</div></div>
+                <div class="fr"><div class="frl">deuda_pension</div><div class="frv merged">S/ 2,400 (cruzado SAP)</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="abar">
+          <div class="abico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
+          <div class="abtxt">
+            <div class="abtit">Persistia puede corregir automáticamente 481 de 519 errores críticos</div>
+            <div class="absub">38 requieren revisión manual · Normaliza encoding, duplicados, rangos, fechas y catálogos · Cruza SIA + SAP + CRM</div>
+          </div>
+          <button class="btn bd btn-xs" onclick="runClean()">Ejecutar limpieza completa →</button>
+        </div>
+      </div>
+
+      <!-- PASO 3: RESULTADOS -->
+      <div id="de-p3" style="display:none">
+        <div class="resgrid">
+          <div class="rkcard"><div class="rkl">Registros limpios</div><div class="rkv" style="color:var(--b)">3,214</div><div class="rkd">de 3,641 brutos procesados</div></div>
+          <div class="rkcard"><div class="rkl">Errores corregidos</div><div class="rkv" style="color:var(--g)">481</div><div class="rkd">92.7% auto-corregido</div></div>
+          <div class="rkcard"><div class="rkl">Duplicados eliminados</div><div class="rkv" style="color:var(--a)">427</div><div class="rkd">filas fusionadas o removidas</div></div>
+          <div class="rkcard"><div class="rkl">Calidad final</div><div class="rkv" style="color:var(--g)">97.1%</div><div class="rkd">desde 61.3% inicial</div></div>
+        </div>
+        <div class="dtw">
+          <div class="dth"><span class="dtlbl">Base unificada · Lista para Persistia · 3,214 registros</span><span class="tag tgg">3,214 registros</span><span class="tag tgb" style="margin-left:4px">34 columnas</span></div>
+          <div style="overflow-x:auto">
+            <table class="dtable">
+              <thead><tr><th>cod_alumno</th><th>apellidos_nombres</th><th>programa_academico</th><th>promedio_pond</th><th>pct_asistencia</th><th>deuda_pension</th><th>ind_beca</th><th style="color:var(--g)">⚡ score_riesgo</th><th style="color:var(--g)">⚡ nivel_riesgo</th><th style="color:var(--g)">⚡ canal_opt</th></tr></thead>
+              <tbody>
+                <tr><td class="cc">8472910</td><td class="cf">ROJAS GARCIA, CAMILA</td><td class="cf">Ingeniería de Software</td><td class="cf">12.5</td><td class="cf">65.0</td><td class="cn">2400.00</td><td class="cf">false</td><td class="cn" style="color:var(--rt)">88</td><td class="cn" style="color:var(--rt)">ALTO</td><td class="cn">WhatsApp</td></tr>
+                <tr><td class="cc">7391024</td><td class="cf">SILVA REYES, MATEO</td><td class="cc">Derecho Empresarial</td><td class="cc">14.2</td><td class="cf">0.0</td><td class="cn">0.00</td><td class="cf">true</td><td class="cn" style="color:var(--rt)">79</td><td class="cn" style="color:var(--rt)">ALTO</td><td class="cn">WhatsApp</td></tr>
+                <tr><td class="cc">6284751</td><td class="cf">FERNÁNDEZ DÍAZ, LUCÍA</td><td class="cf">Medicina Humana</td><td class="cc">16.8</td><td class="cf">95.0</td><td class="cn">0.00</td><td class="cc">true</td><td class="cn" style="color:var(--at)">45</td><td class="cn" style="color:var(--at)">MEDIO</td><td class="cn">Email</td></tr>
+                <tr><td class="cc">4837261</td><td class="cf">QUISPE MAMANI, FIORELLA</td><td class="cf">Adm. y Negocios Digitales</td><td class="cf">10.8</td><td class="cf">48.0</td><td class="cn">1800.00</td><td class="cf">false</td><td class="cn" style="color:var(--rt)">93</td><td class="cn" style="color:var(--rt)">ALTO</td><td class="cn">Llamada</td></tr>
+                <tr><td class="cc">5192847</td><td class="cf">APAZA CONDORI, GIANCARLO</td><td class="cf">Contabilidad y Finanzas</td><td class="cc">13.1</td><td class="cf">72.0</td><td class="cn">900.00</td><td class="cc">false</td><td class="cn" style="color:var(--at)">52</td><td class="cn" style="color:var(--at)">MEDIO</td><td class="cn">WhatsApp</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="abar">
+          <div class="abico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+          <div class="abtxt">
+            <div class="abtit">Base lista · 3,214 estudiantes · 18 campos calculados · 47 en alerta ALTO</div>
+            <div class="absub">score_riesgo, nivel_riesgo, canal_opt, causal_principal, valor_matricula, dias_sin_gestion y 12 más</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn bg btn-xs" onclick="toast('Descargando base_limpia_2026_1.csv...')">Descargar CSV</button>
+            <button class="btn bn btn-xs" onclick="activarEnPersistia()">Activar en Persistia →</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARDS ═══ -->
+<div class="view" id="v-dash">
+  <div class="dash">
+    <div class="dash2">
+      <div class="dcard">
+        <div class="dctit">Embudo de retención · 2026-1 <span class="dsub">UPC Lima</span></div>
+        <div class="funrow"><span class="funl">Total matriculados</span><div class="funbw"><div class="funb" style="width:100%;background:var(--t1)"></div></div><span class="funn">3,214</span></div>
+        <div class="funrow"><span class="funl">En alerta de deserción</span><div class="funbw"><div class="funb" style="width:14.6%;background:var(--a)"></div></div><span class="funn">470 (14.6%)</span></div>
+        <div class="funrow"><span class="funl">Contactados</span><div class="funbw"><div class="funb" style="width:13.7%;background:var(--b)"></div></div><span class="funn">440 (93.6%)</span></div>
+        <div class="funrow"><span class="funl">Respondieron</span><div class="funbw"><div class="funb" style="width:10.8%;background:#0D9488)"></div></div><span class="funn">348 (79.1%)</span></div>
+        <div class="funrow"><span class="funl">Matriculados (retenidos)</span><div class="funbw"><div class="funb" style="width:10.0%;background:var(--g)"></div></div><span class="funn">322 (92.5%)</span></div>
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--ln);display:flex;gap:14px">
+          <div><div class="kl">Deserción bruta</div><div style="font-size:16px;font-weight:600;font-family:var(--mono);color:var(--r)">5.8%</div></div>
+          <div><div class="kl">Meta 2026-1</div><div style="font-size:16px;font-weight:600;font-family:var(--mono);color:var(--g)">≤7.0%</div></div>
+          <div><div class="kl">vs 2025-2</div><div style="font-size:16px;font-weight:600;font-family:var(--mono);color:var(--g)">−2.1 pp</div></div>
+        </div>
+      </div>
+      <div class="dcard">
+        <div class="dctit">Campañas activas · Ciclo 2026-1</div>
+        <table class="mt">
+          <thead><tr><th>Campaña</th><th style="text-align:right">Enviados</th><th style="text-align:right">Apertura</th><th style="text-align:right">Conversión</th></tr></thead>
+          <tbody>
+            <tr><td><span class="sdotd" style="background:var(--r)"></span>Alerta ALTO · Deuda pensión</td><td style="text-align:right;font-family:var(--mono)">127</td><td style="text-align:right;font-family:var(--mono)">84%</td><td style="text-align:right;color:var(--g);font-family:var(--mono)">41%</td></tr>
+            <tr><td><span class="sdotd" style="background:var(--a)"></span>Alerta MEDIO · Inasistencia</td><td style="text-align:right;font-family:var(--mono)">203</td><td style="text-align:right;font-family:var(--mono)">71%</td><td style="text-align:right;color:var(--g);font-family:var(--mono)">34%</td></tr>
+            <tr><td><span class="sdotd" style="background:var(--b)"></span>Bienvenida ingresantes I</td><td style="text-align:right;font-family:var(--mono)">418</td><td style="text-align:right;font-family:var(--mono)">91%</td><td style="text-align:right;color:var(--g);font-family:var(--mono)">67%</td></tr>
+            <tr><td><span class="sdotd" style="background:var(--p)"></span>Becados con alerta académica</td><td style="text-align:right;font-family:var(--mono)">89</td><td style="text-align:right;font-family:var(--mono)">78%</td><td style="text-align:right;color:var(--g);font-family:var(--mono)">58%</td></tr>
+            <tr><td><span class="sdotd" style="background:var(--g)"></span>Gestión de deuda activa</td><td style="text-align:right;font-family:var(--mono)">156</td><td style="text-align:right;font-family:var(--mono)">69%</td><td style="text-align:right;color:var(--a);font-family:var(--mono)">22%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="dcard">
+        <div class="dctit">Riesgo de deserción por facultad</div>
+        <div class="bch">
+          <div class="bcc"><div class="bcs" style="height:88px"><div class="bseg" style="height:24%;background:var(--r)"></div><div class="bseg" style="height:33%;background:var(--a)"></div><div class="bseg" style="height:43%;background:var(--g)"></div></div><div class="bcl">Fac.<br>Ingeniería</div></div>
+          <div class="bcc"><div class="bcs" style="height:70px"><div class="bseg" style="height:19%;background:var(--r)"></div><div class="bseg" style="height:29%;background:var(--a)"></div><div class="bseg" style="height:52%;background:var(--g)"></div></div><div class="bcl">Fac.<br>Derecho</div></div>
+          <div class="bcc"><div class="bcs" style="height:55px"><div class="bseg" style="height:9%;background:var(--r)"></div><div class="bseg" style="height:18%;background:var(--a)"></div><div class="bseg" style="height:73%;background:var(--g)"></div></div><div class="bcl">Fac. C.<br>Salud</div></div>
+          <div class="bcc"><div class="bcs" style="height:75px"><div class="bseg" style="height:21%;background:var(--r)"></div><div class="bseg" style="height:28%;background:var(--a)"></div><div class="bseg" style="height:51%;background:var(--g)"></div></div><div class="bcl">Fac.<br>Negocios</div></div>
+          <div class="bcc"><div class="bcs" style="height:60px"><div class="bseg" style="height:14%;background:var(--r)"></div><div class="bseg" style="height:24%;background:var(--a)"></div><div class="bseg" style="height:62%;background:var(--g)"></div></div><div class="bcl">Fac.<br>Psicología</div></div>
+          <div class="bcc"><div class="bcs" style="height:65px"><div class="bseg" style="height:17%;background:var(--r)"></div><div class="bseg" style="height:27%;background:var(--a)"></div><div class="bseg" style="height:56%;background:var(--g)"></div></div><div class="bcl">Fac.<br>Economía</div></div>
+        </div>
+        <div class="bleg"><span><div class="bl" style="background:var(--r)"></div>ALTO</span><span><div class="bl" style="background:var(--a)"></div>MEDIO</span><span><div class="bl" style="background:var(--g)"></div>BAJO</span></div>
+      </div>
+      <div class="dcard">
+        <div class="dctit">Efectividad por canal de contacto</div>
+        <table class="mt">
+          <thead><tr><th>Canal</th><th style="text-align:right">Acciones</th><th style="text-align:right">Respuesta</th><th style="text-align:right">Éxito matrícula</th></tr></thead>
+          <tbody>
+            <tr><td>💬 WhatsApp Business</td><td style="text-align:right;font-family:var(--mono)">412</td><td style="text-align:right;font-family:var(--mono)">81%</td><td style="text-align:right;color:var(--g);font-family:var(--mono)">68%</td></tr>
+            <tr><td>📞 Llamada directa</td><td style="text-align:right;font-family:var(--mono)">118</td><td style="text-align:right;font-family:var(--mono)">64%</td><td style="text-align:right;color:var(--g);font-family:var(--mono)">74%</td></tr>
+            <tr><td>📧 Email institucional</td><td style="text-align:right;font-family:var(--mono)">267</td><td style="text-align:right;font-family:var(--mono)">43%</td><td style="text-align:right;color:var(--a);font-family:var(--mono)">39%</td></tr>
+            <tr><td>👨‍🏫 Tutoría presencial</td><td style="text-align:right;font-family:var(--mono)">67</td><td style="text-align:right;font-family:var(--mono)">100%</td><td style="text-align:right;color:var(--g);font-family:var(--mono)">87%</td></tr>
+            <tr><td>📱 SMS recordatorio</td><td style="text-align:right;font-family:var(--mono)">89</td><td style="text-align:right;font-family:var(--mono)">31%</td><td style="text-align:right;color:var(--a);font-family:var(--mono)">18%</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:10px;padding-top:9px;border-top:1px solid var(--ln);display:flex;gap:14px">
+          <div><div class="kl">Mejor canal</div><div style="font-size:13px;font-weight:600;color:var(--t1)">Tutoría</div></div>
+          <div><div class="kl">Más usado</div><div style="font-size:13px;font-weight:600;color:var(--t1)">WhatsApp</div></div>
+          <div><div class="kl">NPS estudiante</div><div style="font-size:13px;font-weight:600;color:var(--g)">+42</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SEGMENTOS ═══ -->
+<div class="view" id="v-seg">
+  <div class="segv">
+    <div class="seglist" id="seglist-nav"></div>
+    <div class="segdet" id="segdet-body"></div>
+  </div>
+</div>
+
+<!-- ═══ CONFIGURACIÓN ═══ -->
+<div class="view" id="v-cfg">
+  <div class="cfgv">
+    <div class="cfgnav">
+      <div class="cnlbl">Beneficios</div>
+      <div class="cni on" onclick="showCfg('c-ben',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>Catálogo de ofertas</div>
+      <div class="cni" onclick="showCfg('c-mx',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="1.8"/><path stroke-linecap="round" d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>Matriz NBA</div>
+      <div class="cnlbl" style="margin-top:8px">Comunicación</div>
+      <div class="cni" onclick="showCfg('c-ch',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>Canales activos</div>
+      <div class="cnlbl" style="margin-top:8px">Sistema</div>
+      <div class="cni" onclick="showCfg('c-rules',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>Reglas de scoring</div>
+      <div class="cni" onclick="showCfg('c-int',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Integraciones</div>
+    </div>
+    <div class="cfgbody">
+      <div id="c-ben">
+        <div class="panel"><div class="ph"><div><div class="phtit">Catálogo de beneficios de retención</div><div class="phsub">Qué puede ofrecer Persistia a cada tipo de estudiante</div></div></div>
+        <div class="pb"><div class="bengrid">
+          <div class="benc on"><div class="bctop"><div class="bcico bcig"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="bcname">Fraccionamiento de pensión</div><div class="bcdot" style="background:var(--g)"></div></div><div class="bcsub" style="margin-bottom:9px">División en cuotas sin interés ni recargo</div><div class="bcrules"><div class="rr"><span class="rl">Cuotas máx.</span><span class="rv">6</span></div><div class="rr"><span class="rl">Deuda mín.</span><span class="rv">S/ 500</span></div><div class="rr"><span class="rl">Aprobación</span><span class="rv">Automática</span></div></div></div>
+          <div class="benc on"><div class="bctop"><div class="bcico bcib"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg></div><div class="bcname">Cambio de turno</div><div class="bcdot" style="background:var(--g)"></div></div><div class="bcsub" style="margin-bottom:9px">Traslado de mañana/tarde/noche sin costo</div><div class="bcrules"><div class="rr"><span class="rl">Disponible</span><span class="rv">Todos los turnos</span></div><div class="rr"><span class="rl">Créditos mín.</span><span class="rv">18</span></div><div class="rr"><span class="rl">Plazo</span><span class="rv">Próximo ciclo</span></div></div></div>
+          <div class="benc on"><div class="bctop"><div class="bcico bcip"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg></div><div class="bcname">Beca socioeconómica de emergencia</div><div class="bcdot" style="background:var(--g)"></div></div><div class="bcsub" style="margin-bottom:9px">Descuento temporal por situación crítica</div><div class="bcrules"><div class="rr"><span class="rl">Descuento</span><span class="rv">25%</span></div><div class="rr"><span class="rl">PP mín.</span><span class="rv">11.0</span></div><div class="rr"><span class="rl">Duración</span><span class="rv">1 ciclo</span></div></div></div>
+          <div class="benc on"><div class="bctop"><div class="bcico bciy"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></div><div class="bcname">Tutoría académica gratuita</div><div class="bcdot" style="background:var(--g)"></div></div><div class="bcsub" style="margin-bottom:9px">Sesiones con tutor asignado sin costo</div><div class="bcrules"><div class="rr"><span class="rl">Sesiones</span><span class="rv">4 / ciclo</span></div><div class="rr"><span class="rl">Aplica si</span><span class="rv">PP &lt; 13 o faltas &gt;20%</span></div></div></div>
+          <div class="benc on"><div class="bctop"><div class="bcico bcib"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div><div class="bcname">Retiro de cursos sin penalización</div><div class="bcdot" style="background:var(--g)"></div></div><div class="bcsub" style="margin-bottom:9px">Retira hasta 2 cursos sin impacto en PP ni beca</div><div class="bcrules"><div class="rr"><span class="rl">Cursos máx.</span><span class="rv">2</span></div><div class="rr"><span class="rl">Requisito</span><span class="rv">Solo solicitud</span></div></div></div>
+          <div class="benc on"><div class="bctop"><div class="bcico bcir"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div><div class="bcname">Traslado de sede</div><div class="bcdot" style="background:var(--g)"></div></div><div class="bcsub" style="margin-bottom:9px">Cambio de campus sin pérdida de créditos ni beca</div><div class="bcrules"><div class="rr"><span class="rl">Sedes</span><span class="rv">San Isidro, Monterrico, Villa</span></div><div class="rr"><span class="rl">Créditos mín.</span><span class="rv">28</span></div></div></div>
+        </div></div></div>
+      </div>
+      <div id="c-mx" style="display:none">
+        <div class="panel"><div class="ph"><div><div class="phtit">Matriz NBA · Qué ofrecer según causal</div><div class="phsub">Acción recomendada por tipo de problema detectado</div></div></div>
+        <div class="pb">
+          <div class="mx">
+            <div class="mxh"></div><div class="mxh">Solo deuda pensión</div><div class="mxh">Deuda + bajo PP</div><div class="mxh">Inasistencia / abandono</div>
+            <div class="mxrl">Riesgo ALTO · deuda</div><div class="mxc"><div class="mchip mcg">Fraccionamiento auto</div></div><div class="mxc"><div class="mchip mcg">Fracc. + Tutoría</div></div><div class="mxc"><div class="mchip mca">Tutoría urgente</div></div>
+            <div class="mxrl">Riesgo ALTO · académico</div><div class="mxc"><div class="mchip mcn">—</div></div><div class="mxc"><div class="mchip mca">Retiro de cursos</div></div><div class="mxc"><div class="mchip mcg">Tutoría + Retiro</div></div>
+            <div class="mxrl">Riesgo MEDIO · situacional</div><div class="mxc"><div class="mchip mca">Fraccionamiento</div></div><div class="mxc"><div class="mchip mca">Cambio turno / sede</div></div><div class="mxc"><div class="mchip mcg">Beca emergencia</div></div>
+            <div class="mxrl">Riesgo MEDIO · abandono</div><div class="mxc"><div class="mchip mcn">—</div></div><div class="mxc"><div class="mchip mcr">Tutoría urgente</div></div><div class="mxc"><div class="mchip mcr">Coordinación acad.</div></div>
+          </div>
+          <div style="margin-top:12px;font-size:10px;color:var(--t3)">Verde = Automático · Ámbar = Requiere aprobación · Rojo = Escalación a coordinación</div>
+        </div></div>
+      </div>
+      <div id="c-ch" style="display:none">
+        <div class="chgrid">
+          <div class="chcard"><div class="cchh"><div class="cchico" style="background:#E9FBF0">💬</div><div><div class="cchn">WhatsApp Business</div><div class="ccht">Meta Cloud API · Número verificado</div></div><div class="cchst stg"><div class="stdt stdtg"></div>Conectado</div></div><div class="ccb"><div><div class="flbl">Phone Number ID</div><div class="fval">114289784732910</div></div><div><div class="flbl">Estado de verificación</div><div class="fval">✓ Cuenta de empresa verificada</div></div><div class="chlims"><div class="cli"><div class="cll">Mensajes/día</div><div class="clv">500</div></div><div class="cli"><div class="cll">Por hora</div><div class="clv">80</div></div><div class="cli"><div class="cll">Delay mín.</div><div class="clv">3 seg</div></div></div></div></div>
+          <div class="chcard"><div class="cchh"><div class="cchico" style="background:#EEF3FF">📧</div><div><div class="cchn">Email institucional</div><div class="ccht">SMTP · smtp.upc.edu.pe</div></div><div class="cchst stg"><div class="stdt stdtg"></div>Conectado</div></div><div class="ccb"><div><div class="flbl">Remitente</div><div class="fval">retencion@upc.edu.pe</div></div><div><div class="flbl">Servidor</div><div class="fval">smtp.upc.edu.pe · Puerto 587 · TLS</div></div><div class="chlims"><div class="cli"><div class="cll">Correos/día</div><div class="clv">1,000</div></div><div class="cli"><div class="cll">Por hora</div><div class="clv">150</div></div><div class="cli"><div class="cll">Delay mín.</div><div class="clv">2 seg</div></div></div></div></div>
+          <div class="chcard"><div class="cchh"><div class="cchico" style="background:#F5F2FF">📞</div><div><div class="cchn">Llamadas salientes</div><div class="ccht">Contact Center · Twilio Voice</div></div><div class="cchst sta"><div class="stdt stdta"></div>En prueba</div></div><div class="ccb"><div><div class="flbl">Número origen</div><div class="fval">+51 (1) 625-4200</div></div><div><div class="flbl">Horario activo</div><div class="fval">Lun–Vie · 09:00–19:00</div></div><div class="chlims"><div class="cli"><div class="cll">Llamadas/día</div><div class="clv">50</div></div><div class="cli"><div class="cll">Por hora</div><div class="clv">12</div></div><div class="cli"><div class="cll">Duración máx.</div><div class="clv">10 min</div></div></div></div></div>
+          <div class="chcard"><div class="cchh"><div class="cchico" style="background:#F0FDF4">👨‍🏫</div><div><div class="cchn">Tutoría presencial</div><div class="ccht">Sistema de citas · SIGA UPC</div></div><div class="cchst stg"><div class="stdt stdtg"></div>Activo</div></div><div class="ccb"><div><div class="flbl">Sistema</div><div class="fval">SIGA · Módulo de tutorías</div></div><div><div class="flbl">Disponibilidad actual</div><div class="fval">14 tutores · 68 slots libres esta semana</div></div><div class="chlims"><div class="cli"><div class="cll">Capacidad/sem.</div><div class="clv">120</div></div><div class="cli"><div class="cll">Duración</div><div class="clv">45 min</div></div><div class="cli"><div class="cll">Modalidad</div><div class="clv">Híbrida</div></div></div></div></div>
+        </div>
+      </div>
+      <div id="c-rules" style="display:none">
+        <div class="panel"><div class="ph"><div><div class="phtit">Reglas de scoring de deserción</div><div class="phsub">Variables y pesos para calcular el score de riesgo (0–100)</div></div></div>
+        <div class="pb"><div class="rllist">
+          <div class="rli"><span class="rldr">⠿</span><div class="rlinfo"><div class="rlname">Deuda de pensión activa ≥ S/ 500</div><div class="rlcond">financiero.deuda_pension &gt;= 500 AND financiero.estado_pago = 'vencido'</div></div><div class="rlw"><div class="rwbar"><div class="rwf" style="width:90%"></div></div><span class="rwv">30 pts</span></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="rli"><span class="rldr">⠿</span><div class="rlinfo"><div class="rlname">Inasistencia injustificada &gt; 3 días consecutivos</div><div class="rlcond">academico.dias_sin_asistir &gt; 3 AND academico.justificacion = null</div></div><div class="rlw"><div class="rwbar"><div class="rwf" style="width:75%"></div></div><span class="rwv">25 pts</span></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="rli"><span class="rldr">⠿</span><div class="rlinfo"><div class="rlname">Promedio ponderado &lt; 11.0 en el ciclo</div><div class="rlcond">academico.promedio_ponderado &lt; 11.0 AND ciclo = ciclo_actual</div></div><div class="rlw"><div class="rwbar"><div class="rwf" style="width:60%"></div></div><span class="rwv">20 pts</span></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="rli"><span class="rldr">⠿</span><div class="rlinfo"><div class="rlname">Sin acceso al Campus Virtual &gt; 7 días</div><div class="rlcond">academico.ultimo_acceso_canvas &gt; NOW() - INTERVAL '7 days'</div></div><div class="rlw"><div class="rwbar"><div class="rwf" style="width:45%"></div></div><span class="rwv">15 pts</span></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="rli"><span class="rldr">⠿</span><div class="rlinfo"><div class="rlname">Ticket CRM: retiro parcial o total</div><div class="rlcond">crm.tipo_solicitud IN ('retiro_parcial','retiro_total') AND crm.estado = 'abierto'</div></div><div class="rlw"><div class="rwbar"><div class="rwf" style="width:30%"></div></div><span class="rwv">10 pts</span></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="rli"><span class="rldr">⠿</span><div class="rlinfo"><div class="rlname">Ingresante ciclo I (primeras 4 semanas)</div><div class="rlcond">academico.ciclo = 1 AND DATEDIFF(NOW(), academico.fecha_inicio) &lt; 28</div></div><div class="rlw"><div class="rwbar"><div class="rwf" style="width:22%"></div></div><span class="rwv">7 pts</span></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="rli" style="opacity:.45"><span class="rldr">⠿</span><div class="rlinfo"><div class="rlname">Beca negada en el ciclo actual</div><div class="rlcond">academico.beca_estado = 'negada' AND beca.ciclo = ciclo_actual</div></div><div class="rlw"><div class="rwbar"><div class="rwf" style="width:16%"></div></div><span class="rwv">5 pts</span></div><div class="tog" onclick="this.classList.toggle('on')"></div></div>
+        </div>
+        <div style="margin-top:12px;padding:10px 12px;background:var(--s1);border-radius:8px;border:1px solid var(--ln);display:flex;align-items:center;gap:14px;font-size:10.5px;color:var(--t2)">
+          <span>Umbral <b>ALTO</b>: ≥ 70 pts</span><span>Umbral <b>MEDIO</b>: 40–69 pts</span><span>Umbral <b>BAJO</b>: &lt; 40 pts</span><span style="margin-left:auto;color:var(--t3)">Revisión: cada 6 horas</span>
+        </div></div></div>
+      </div>
+      <div id="c-int" style="display:none">
+        <div class="panel"><div class="ph"><div><div class="phtit">Integraciones activas</div><div class="phsub">Fuentes de datos conectadas al motor de Persistia</div></div></div>
+        <div class="pb">
+          <div class="inti"><div class="intico">🎓</div><div class="intinfo"><div class="intname">SIA · Sistema de Información Académica</div><div class="intdesc">Notas, asistencia, matrícula, PP, estado académico · Sync cada 6h</div></div><div class="intst stg"><div class="stdt stdtg"></div>Activo</div><button class="intbtn conn">Configurado</button></div>
+          <div class="inti"><div class="intico">💰</div><div class="intinfo"><div class="intname">SAP · Módulo financiero</div><div class="intdesc">Deuda de pensión, cuotas vencidas, estado de pago, becas · Sync cada 6h</div></div><div class="intst stg"><div class="stdt stdtg"></div>Activo</div><button class="intbtn conn">Configurado</button></div>
+          <div class="inti"><div class="intico">💼</div><div class="intinfo"><div class="intname">CRM · Gestión de tickets y contactos</div><div class="intdesc">Solicitudes de retiro, traslado, cambio de turno, historial de contacto</div></div><div class="intst stg"><div class="stdt stdtg"></div>Activo</div><button class="intbtn conn">Configurado</button></div>
+          <div class="inti"><div class="intico">📚</div><div class="intinfo"><div class="intname">Canvas LMS · Campus Virtual UPC</div><div class="intdesc">Último acceso, participación, entregables, actividad en aula virtual</div></div><div class="intst sta"><div class="stdt stdta"></div>Parcial</div><button class="intbtn" onclick="toast('Reconectando Canvas...')">Reconectar</button></div>
+          <div class="inti"><div class="intico">📊</div><div class="intinfo"><div class="intname">Power BI · Dashboards ejecutivos</div><div class="intdesc">Exportación automática de métricas para reportes de gerencia</div></div><div class="intst stg"><div class="stdt stdtg"></div>Activo</div><button class="intbtn conn">Configurado</button></div>
+          <div class="inti"><div class="intico">🔗</div><div class="intinfo"><div class="intname">API REST · Webhook personalizado</div><div class="intdesc">Integración con sistemas legacy vía REST · Pendiente de configurar</div></div><div class="intst" style="color:var(--t3)"><div class="stdt" style="background:var(--t3)"></div>Sin configurar</div><button class="intbtn" onclick="toast('Abriendo configuración de API...')">Configurar</button></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<div class="toast" id="toast"><span id="tmsg"></span></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// DATASET: 20 ESTUDIANTES UPC CICLO 2026-1
+// Datos realistas basados en patrones reales de retención
+// ══════════════════════════════════════════════════════
+const DB = [
+  {
+    id:'s01', nombre:'Camila', apellido:'Rojas García', ini:'CR', color:'#1A1917',
+    carrera:'Ingeniería de Software', facultad:'Fac. de Ingeniería', ciclo:5,
+    pp:12.5, asistencia:65, deuda:2400, beca:false, diasSinGestion:14,
+    tickets:1, practicas:true, turno:'Mañana', sede:'San Isidro',
+    causal:'conflicto_horario_laboral', nivel:'ALTO', score:88, estado:'sin_gestionar',
+    valor:32400, canal:'WhatsApp', telefono:'+51 987 654 321',
+    academico:'PP 12.5 · Asist. 65% · 2 cursos en riesgo de jalar. Prácticas pre-prof. registradas en empresa del sector.',
+    financiero:'Deuda S/ 2,400 · 2 cuotas vencidas · Beca de apoyo negada en este ciclo.',
+    crm:'1 ticket abierto: "cruce de horario con trabajo". Sin respuesta a 2 correos. Último contacto: hace 14 días.',
+    diagnostico:'Camila empezó a trabajar a tiempo completo este ciclo. Su horario de empresa (8am–6pm) se cruza directamente con sus clases de mañana. La deuda y la beca negada son consecuencias directas del problema laboral. <span class="dhl">Causa raíz: conflicto laboral-académico. Intervención: cambio a turno noche + fraccionamiento de pensión.</span>',
+    nba:{
+      WhatsApp:'Hola Camila 👋\n\nVi que estás haciendo tus prácticas — ¡eso es un gran paso!\n\nNotamos que el turno de mañana se cruza con tu horario de trabajo. Podemos:\n✅ Pasarte al turno noche sin costo\n✅ Fraccionar tu deuda en 4 cuotas sin interés\n\nAmbas cosas las podemos activar hoy mismo. ¿Te cuadra?\n\nResponde SÍ y lo procesamos ahora. 🎓',
+      Email:'Estimada Camila,\n\nNos comunicamos del área de Retención Estudiantil de UPC.\n\nHemos revisado tu situación académica y financiera del ciclo 2026-1. Entendemos que iniciaste actividades de prácticas pre-profesionales, lo cual genera un cruce con tu horario actual.\n\nPara facilitarte la continuidad de tus estudios, hemos pre-aprobado:\n• Traslado al turno nocturno (sin costo adicional)\n• Fraccionamiento de tu deuda en 4 cuotas mensuales sin intereses\n\nAmbas opciones están disponibles para activarse esta semana. ¿Cuándo podríamos conversar para confirmar?\n\nQuedamos a tu disposición.\nEquipo de Retención · UPC',
+      Llamada:'[Apertura] Buenos días, ¿hablo con Camila Rojas? Soy [nombre] del área de Retención Estudiantil de UPC.\n— Motivo: Revisé tu expediente y vi que registraste tus prácticas — ¡felicitaciones! Entiendo que el horario puede ser complicado.\n— Oferta: Tenemos disponible el cambio a turno noche y el fraccionamiento de tu deuda, sin costo.\n— Objeción probable: "no tengo tiempo" → "por eso mismo el turno noche te da más flexibilidad"\n— Cierre: ¿Puedo activar el cambio ahora mismo mientras estamos en línea?'
+    },
+    historial:['15 Mar — Email enviado · Sin respuesta','8 Mar — Ticket CRM creado: cruce horario','1 Mar — Deuda de S/ 1,200 registrada (cuota 1)'],
+    similares:'11 casos similares este ciclo. 8 de 11 retención exitosa con turno noche + fraccionamiento (72.7%).'
+  },
+  {
+    id:'s02', nombre:'Mateo', apellido:'Silva Reyes', ini:'MS', color:'#0D9488',
+    carrera:'Derecho Empresarial', facultad:'Fac. de Derecho', ciclo:2,
+    pp:14.2, asistencia:0, deuda:0, beca:true, diasSinGestion:21,
+    tickets:0, practicas:false, turno:'Tarde', sede:'Monterrico',
+    causal:'ausencia_injustificada', nivel:'ALTO', score:79, estado:'sin_gestionar',
+    valor:18200, canal:'WhatsApp', telefono:'+51 912 345 678',
+    academico:'PP 14.2 · Asist. 0% esta semana · Sin acceso a Canvas desde hace 10 días. Tenía buen desempeño.',
+    financiero:'Sin deuda · Pagos al día · Beca de mérito activa (requiere PP ≥ 14).',
+    crm:'Sin tickets. Sin respuesta a llamada. Último contacto registrado: hace 3 semanas.',
+    diagnostico:'Mateo presentaba buen rendimiento y sus finanzas están en orden, lo que descarta el factor económico. La ausencia abrupta sin comunicación previa sugiere una situación personal no declarada. En ciclo 2, la adaptación universitaria es un factor de riesgo frecuente. <span class="dhl">Causa raíz: posible crisis personal o desadaptación universitaria. Intervención: contacto empático + tutoría de bienestar.</span>',
+    nba:{
+      WhatsApp:'Hola Mateo 🙌\n\nSoy del equipo de tu universidad. Notamos que no has podido asistir esta semana y queremos saber cómo estás — sin presión.\n\nTu tutor, el Prof. Morales, tiene disponibilidad mañana a las 4pm. La reunión es confidencial y puede ser virtual si prefieres.\n\n¿Te agendo? Solo responde SÍ y confirmamos.',
+      Email:'Hola Mateo,\n\nEsperamos que estés bien. Nos comunicamos porque hemos notado algunas ausencias recientes y queremos asegurarnos de que cuentes con el apoyo que necesitas.\n\nTu tutor tiene espacio esta semana para una conversación confidencial. No es una citación — es una reunión de apoyo.\n\n¿Te parece bien mañana a las 4pm? Podemos coordinarlo de manera virtual también.\n\nEstamos aquí para ayudarte.\nEquipo de Bienestar · UPC',
+      Llamada:'[Apertura] Hola Mateo, llamo de Bienestar Estudiantil de UPC — no te preocupes, no es nada formal.\n— Motivo: Notamos que no has podido asistir y queremos saber si todo está bien.\n— Tono: empático, sin presionar, no mencionar la beca todavía\n— Oferta: reunión con tutor esta semana, confidencial, virtual o presencial\n— Cierre: ¿Te puedo agendar para mañana a las 4pm?'
+    },
+    historial:['18 Mar — Llamada no contestada','11 Mar — Última asistencia registrada','5 Mar — Último acceso Canvas LMS'],
+    similares:'8 casos similares en ciclo 2. 6 de 8 retención con intervención temprana de tutoría (75%).'
+  },
+  {
+    id:'s03', nombre:'Lucía', apellido:'Fernández Díaz', ini:'LF', color:'#7C3AED',
+    carrera:'Medicina Humana', facultad:'Fac. de Ciencias de la Salud', ciclo:7,
+    pp:16.8, asistencia:95, deuda:0, beca:true, diasSinGestion:3,
+    tickets:2, practicas:false, turno:'Mañana', sede:'San Isidro',
+    causal:'solicitud_traslado_sede', nivel:'MEDIO', score:45, estado:'sin_gestionar',
+    valor:78500, canal:'Email', telefono:'lucia.fernandez@upc.edu.pe',
+    academico:'PP 16.8 · Asist. 95% · Top 10% de su facultad. 2 electivos solicitados para retiro.',
+    financiero:'Sin deuda · Beca de excelencia activa (PP ≥ 16). Alto valor estratégico.',
+    crm:'2 tickets: solicitud de retiro de 2 electivos + consulta sobre traslado a sede Villa.',
+    diagnostico:'Lucía es una estudiante de alto rendimiento con beca de excelencia. Sus dos tickets indican una necesidad logística, no académica ni financiera. Necesita trasladarse a la sede Villa por razones familiares. Si no se gestiona, podría optar por retiro total. <span class="dhl">Causa raíz: barrera geográfica y carga de electivos. Intervención: aprobar traslado + retiro sin penalización.</span>',
+    nba:{
+      WhatsApp:'Hola Lucía 🌟\n\nRevisamos tu solicitud de traslado y retiro de electivos. Dado tu excelente desempeño:\n\n✅ Traslado a sede Villa aprobado (próximo ciclo)\n✅ Retiro de 2 electivos sin penalización en PP\n✅ Beca de excelencia mantenida\n\n¿Confirmamos el proceso? Responde SÍ y lo tramitamos hoy.',
+      Email:'Estimada Lucía,\n\nHemos revisado tus dos solicitudes del ciclo 2026-1.\n\nDado tu destacado desempeño académico (PP 16.8, Top 10%), nos complace informarte que hemos aprobado:\n• Traslado a sede Villa el próximo ciclo\n• Retiro de 2 cursos electivos sin impacto en PP ni en tu beca de excelencia\n\nSolo necesitamos tu confirmación para proceder con los trámites. ¿Cuándo podemos coordinar?\n\nFelicitaciones por tu trayectoria.\nÁrea de Retención · UPC',
+      Llamada:'[Apertura] Buenos días Lucía, ¿tiene un momento? Llamo de Retención de UPC con buenas noticias.\n— Oferta: aprobamos el traslado a Villa y el retiro de electivos, beca mantenida.\n— Sin objeciones esperadas — es una solución completa\n— Cierre: solo necesito su confirmación verbal para proceder hoy.'
+    },
+    historial:['20 Mar — Ticket: solicitud traslado sede Villa','19 Mar — Ticket: retiro de 2 electivos','15 Mar — Consulta por correo sobre proceso de traslado'],
+    similares:'5 casos similares de traslado de sede este ciclo. 5 de 5 retenidos con aprobación rápida (100%).'
+  },
+  {
+    id:'s04', nombre:'Fiorella', apellido:'Quispe Mamani', ini:'FQ', color:'#DC2626',
+    carrera:'Administración y Negocios Digitales', facultad:'Fac. de Negocios', ciclo:1,
+    pp:10.8, asistencia:48, deuda:1800, beca:false, diasSinGestion:7,
+    tickets:1, practicas:false, turno:'Tarde', sede:'San Isidro',
+    causal:'deuda_pension', nivel:'ALTO', score:93, estado:'sin_gestionar',
+    valor:14800, canal:'WhatsApp', telefono:'+51 998 112 334',
+    academico:'PP 10.8 · Asist. 48% · En riesgo de jalar 3 cursos. Ingresante ciclo I.',
+    financiero:'Deuda S/ 1,800 · 3 cuotas vencidas · Sin beca. Familia reporta dificultad económica.',
+    crm:'1 ticket: "problemas económicos familiares". Respondió 1 vez por WhatsApp hace 2 semanas.',
+    diagnostico:'Fiorella es ingresante con triple riesgo: deuda alta, bajo PP y ausencias críticas. La combinación en ciclo 1 es la de mayor riesgo de deserción permanente. La familia atraviesa dificultades económicas. <span class="dhl">Causa raíz: impacto económico familiar en ciclo de adaptación. Intervención: beca de emergencia + tutoría + fraccionamiento urgente.</span>',
+    nba:{
+      WhatsApp:'Hola Fiorella 👋\n\nSoy del área de Apoyo Estudiantil de UPC. Queremos ayudarte a continuar con tus estudios.\n\nHemos revisado tu situación y podemos ofrecerte:\n✅ Beca socioeconómica de emergencia (25% de descuento)\n✅ Fraccionamiento de tu deuda en 6 cuotas sin interés\n✅ Tutoría gratuita para ponerte al día\n\n¿Podemos llamarte hoy para coordinar todo?\n\nResponde SÍ y te contactamos en menos de 2 horas.',
+      Email:'Estimada Fiorella,\n\nNos comunicamos de UPC con el objetivo de apoyarte en tu continuidad académica.\n\nEntendemos que el inicio universitario puede traer desafíos, y queremos que sepas que tienes nuestro respaldo:\n\n• Beca socioeconómica de emergencia: 25% de descuento en pensión\n• Fraccionamiento de deuda en 6 cuotas sin recargo\n• Programa de tutoría académica gratuita\n\nEstas opciones están disponibles para ti ahora. ¿Podemos coordinar una llamada esta semana?\n\nEquipo de Bienestar y Retención · UPC',
+      Llamada:'[Apertura] Buenas tardes, ¿hablo con Fiorella? Llamo del área de Apoyo Estudiantil de UPC.\n— Tono: muy empático, sin presión, no mencionar "deuda" de entrada\n— Apertura: "Queremos conocer cómo te ha ido en este primer ciclo"\n— Oferta: beca de emergencia + fraccionamiento + tutoría como paquete\n— Objeción: "no puedo pagar" → "precisamente para eso tenemos la beca, el costo baja 25%"\n— Cierre: ¿Cuándo le viene bien que le llamemos con los detalles?'
+    },
+    historial:['19 Mar — WhatsApp enviado: sin respuesta','12 Mar — Ticket creado: dificultad económica familiar','5 Mar — Cuota 3 vencida sin pago'],
+    similares:'19 casos similares de ingresantes con deuda alta. 13 de 19 retención con paquete beca+fraccionamiento (68%).'
+  },
+  {
+    id:'s05', nombre:'Giancarlo', apellido:'Apaza Condori', ini:'GA', color:'#0EA5E9',
+    carrera:'Contabilidad y Finanzas', facultad:'Fac. de Economía y Finanzas', ciclo:4,
+    pp:13.1, asistencia:72, deuda:900, beca:false, diasSinGestion:5,
+    tickets:0, practicas:true, turno:'Noche', sede:'Monterrico',
+    causal:'retiro_de_cursos', nivel:'MEDIO', score:52, estado:'sin_gestionar',
+    valor:22600, canal:'WhatsApp', telefono:'+51 956 778 901',
+    academico:'PP 13.1 · Asist. 72% · Solicitó retiro de 2 cursos por carga excesiva. Prácticas vespertinas.',
+    financiero:'Deuda S/ 900 · 1 cuota vencida. Sin beca activa.',
+    crm:'Sin tickets formales. Solicitó retiro via formulario web. Trabaja en estudio contable.',
+    diagnostico:'Giancarlo combina trabajo en estudio contable (tardes) con clases nocturnas. La carga de 6 cursos + prácticas lo superó. El retiro de 2 cursos reduciría la presión y le permitiría terminar el ciclo con calidad. La deuda es menor y manejable. <span class="dhl">Causa raíz: sobrecarga académica por trabajo simultáneo. Intervención: aprobar retiro de cursos + regularizar deuda.</span>',
+    nba:{
+      WhatsApp:'Hola Giancarlo 👋\n\nRevisamos tu solicitud de retiro de cursos. Entendemos que combinar trabajo y estudios en turno noche tiene su complejidad.\n\n✅ Aprobamos retiro de 2 cursos sin impacto en PP\n✅ Puedes regularizar tu cuota en 2 partes este mes\n\nAsí terminas el ciclo bien y sin presión. ¿Te parece?\n\nResponde SÍ y lo tramitamos hoy.',
+      Email:'Estimado Giancarlo,\n\nHemos revisado tu solicitud de retiro de cursos para el ciclo 2026-1.\n\nAprobamos el retiro de hasta 2 asignaturas sin penalización en tu promedio ponderado. Esto te permitirá enfocarte en los cursos restantes y cumplir con tus actividades de prácticas.\n\nAdicional, podemos fraccionar tu cuota pendiente de S/ 900 en 2 pagos este mes.\n\nConfírmanos y procedemos.\nEquipo de Retención · UPC',
+      Llamada:'[Apertura] Hola Giancarlo, llamo de Retención de UPC sobre tu solicitud de retiro de cursos.\n— Oferta: aprobamos el retiro sin penalización en PP\n— Adicional: fraccionamos la cuota pendiente sin recargo\n— Cierre: ¿Te confirmo el proceso ahora mismo?'
+    },
+    historial:['21 Mar — Formulario de retiro de cursos enviado','15 Mar — Cuota vencida registrada en SAP'],
+    similares:'14 casos de retiro de cursos este ciclo. 12 de 14 continuaron el siguiente ciclo (85.7%).'
+  },
+  {
+    id:'s06', nombre:'Estefanía', apellido:'Torres Ccopa', ini:'ET', color:'#7C3AED',
+    carrera:'Psicología Organizacional', facultad:'Fac. de Psicología', ciclo:3,
+    pp:15.4, asistencia:88, deuda:0, beca:true, diasSinGestion:2,
+    tickets:1, practicas:false, turno:'Tarde', sede:'San Isidro',
+    causal:'cambio_de_turno', nivel:'MEDIO', score:38, estado:'en_seguimiento',
+    valor:26800, canal:'Email', telefono:'estefania.torres@upc.edu.pe',
+    academico:'PP 15.4 · Asist. 88% · Buen desempeño. Solicitó cambio de turno de tarde a mañana.',
+    financiero:'Sin deuda · Beca de rendimiento activa (PP ≥ 15).',
+    crm:'1 ticket: solicitud de cambio de turno por motivos de transporte (vive en Villa El Salvador).',
+    diagnostico:'Estefanía tiene excelente rendimiento académico. La solicitud de cambio de turno responde a un problema de transporte — el horario tarde la obliga a regresar de noche desde San Isidro a Villa El Salvador. No hay riesgo académico ni financiero. <span class="dhl">Causa raíz: barrera de accesibilidad geográfica. Intervención: aprobar cambio de turno a mañana.</span>',
+    nba:{
+      WhatsApp:'Hola Estefanía 😊\n\nTu solicitud de cambio al turno mañana fue revisada y aprobada.\n\nTus clases del próximo ciclo serán de mañana. Tu beca de rendimiento se mantiene sin cambios.\n\n¿Confirmamos? Responde SÍ.',
+      Email:'Estimada Estefanía,\n\nNos complace informarte que tu solicitud de cambio al turno mañana ha sido aprobada para el ciclo 2026-2.\n\nTu beca de rendimiento académico se mantiene activa.\n\nPor favor confirma recepción respondiendo este correo.\n\nEquipo de Retención · UPC',
+      Llamada:'[Apertura] Hola Estefanía, llamo con buenas noticias sobre tu solicitud.\n— Oferta: cambio de turno a mañana aprobado, beca se mantiene\n— Sin objeciones esperadas\n— Cierre: ¿Confirmas para proceder?'
+    },
+    historial:['22 Mar — Ticket: solicitud cambio turno tarde→mañana','20 Mar — Llamada coordinadora: caso derivado a Retención'],
+    similares:'22 casos de cambio de turno este ciclo. 21 de 22 retención exitosa (95.5%).'
+  },
+  {
+    id:'s07', nombre:'Renato', apellido:'Palomino Vargas', ini:'RP', color:'#059669',
+    carrera:'Marketing Digital', facultad:'Fac. de Comunicaciones', ciclo:6,
+    pp:11.8, asistencia:61, deuda:2100, beca:false, diasSinGestion:10,
+    tickets:2, practicas:false, turno:'Mañana', sede:'San Isidro',
+    causal:'deuda_pension', nivel:'ALTO', score:82, estado:'sin_gestionar',
+    valor:28900, canal:'WhatsApp', telefono:'+51 943 221 567',
+    academico:'PP 11.8 · Asist. 61% · 3 cursos con riesgo de jalar. Faltas concentradas en último mes.',
+    financiero:'Deuda S/ 2,100 · 2 cuotas vencidas · Sin beca. Solicitud de apoyo financiero pendiente.',
+    crm:'2 tickets: deuda vencida + consulta sobre retiro parcial. Sin respuesta a mensajes.',
+    diagnostico:'Renato presenta deterioro académico reciente correlacionado con el inicio de la deuda. Las ausencias se concentran en el último mes, lo que sugiere un detonante reciente. Los tickets de retiro son señal de que ya está considerando abandonar. <span class="dhl">Causa raíz: estrés financiero acumulado que deteriora rendimiento. Intervención: fraccionamiento urgente + tutoría de apoyo.</span>',
+    nba:{
+      WhatsApp:'Hola Renato 👋\n\nSabemos que el último mes ha sido complicado. Queremos ayudarte a retomar el ritmo.\n\nPodemos:\n✅ Fraccionar tu deuda en 4 cuotas sin interés (desde S/ 525/mes)\n✅ Asignarte un tutor para ponerte al día en los 3 cursos\n\n¿Conversamos hoy? Responde SÍ y te llamamos en 2 horas.',
+      Email:'Estimado Renato,\n\nEntendemos que este ciclo ha presentado algunos desafíos. Queremos que sepas que tienes opciones.\n\nHemos preparado una propuesta de apoyo:\n• Fraccionamiento de deuda en 4 cuotas sin recargo\n• Asignación de tutor académico para los cursos con mayor dificultad\n\nSolo necesitamos 15 minutos de tu tiempo para coordinar. ¿Cuándo puedes?\n\nEquipo de Retención · UPC',
+      Llamada:'[Apertura] Hola Renato, llamo del área de Apoyo de UPC — quiero ver cómo puedo ayudarte.\n— Tono: empático, no mencionar "deuda" de entrada\n— Apertura: "Vimos que el último mes fue difícil, ¿qué pasó?"\n— Oferta: fraccionamiento + tutoría como paquete\n— Cierre: ¿Te parece si lo coordinamos ahora mismo?'
+    },
+    historial:['20 Mar — WhatsApp: sin respuesta','15 Mar — Ticket 2: consulta retiro parcial','8 Mar — Ticket 1: deuda vencida'],
+    similares:'16 casos similares. 10 de 16 retención con fraccionamiento + tutoría en combinación (62.5%).'
+  },
+  {
+    id:'s08', nombre:'Paolo', apellido:'Mendoza Cruz', ini:'PM', color:'#D97706',
+    carrera:'Arquitectura', facultad:'Fac. de Arquitectura', ciclo:9,
+    pp:14.9, asistencia:79, deuda:1200, beca:true, diasSinGestion:6,
+    tickets:1, practicas:true, turno:'Mañana', sede:'Monterrico',
+    causal:'deuda_pension', nivel:'ALTO', score:71, estado:'sin_gestionar',
+    valor:67200, canal:'Llamada', telefono:'+51 971 334 890',
+    academico:'PP 14.9 · Asist. 79% · Ciclo de tesis. Prácticas en estudio de arquitectura.',
+    financiero:'Deuda S/ 1,200 · 1 cuota vencida · Beca de rendimiento (riesgo de perder si no paga).',
+    crm:'1 ticket: consulta sobre prórroga de pago por proyecto de tesis extenso.',
+    diagnostico:'Paolo está en ciclo de tesis con prácticas simultáneas. La deuda de 1 cuota amenaza su beca de rendimiento (PP 14.9 ≥ 15 requerido). Perder la beca generaría una deuda mayor. Es un caso sensible de alto valor con solución simple. <span class="dhl">Causa raíz: flujo de caja ajustado en ciclo final. Intervención: prórroga de pago + garantizar beca.</span>',
+    nba:{
+      WhatsApp:'Hola Paolo 👋\n\nEntendemos que el ciclo de tesis + prácticas tiene su complejidad. Queremos asegurarnos de que tu beca se mantenga.\n\n✅ Prórroga de pago aprobada: puedes regularizar el 15 de abril sin recargo\n✅ Beca de rendimiento garantizada mientras regularizas\n\n¿Confirmamos? Responde SÍ.',
+      Email:'Estimado Paolo,\n\nHemos revisado tu situación y entendemos las demandas del ciclo de tesis.\n\nTe confirmamos:\n• Prórroga de pago hasta el 15 de abril sin intereses\n• Beca de rendimiento mantenida durante el período de prórroga\n\nSolo responde confirmando y queda registrado.\n\nEquipo de Retención · UPC',
+      Llamada:'[Apertura] Hola Paolo, llamo de Retención de UPC sobre tu cuota y la beca.\n— Oferta: prórroga al 15 de abril, beca garantizada\n— Sin fricción esperada — es una solución directa\n— Cierre: ¿Confirma para que lo procesemos hoy?'
+    },
+    historial:['21 Mar — Ticket: solicitud prórroga de pago','18 Mar — Cuota 1 vencida en SAP'],
+    similares:'9 casos de prórroga en ciclo de tesis. 9 de 9 retención (100%).'
+  },
+  {
+    id:'s09', nombre:'Xiomara', apellido:'Chávez Pacheco', ini:'XC', color:'#DB2777',
+    carrera:'Ingeniería de Software', facultad:'Fac. de Ingeniería', ciclo:1,
+    pp:9.4, asistencia:35, deuda:2800, beca:false, diasSinGestion:12,
+    tickets:1, practicas:false, turno:'Tarde', sede:'Villa',
+    causal:'deuda_pension', nivel:'ALTO', score:96, estado:'sin_gestionar',
+    valor:13200, canal:'Llamada', telefono:'+51 904 556 789',
+    academico:'PP 9.4 · Asist. 35% · Score CRÍTICO. En riesgo de perder el ciclo completo. Ingresante.',
+    financiero:'Deuda S/ 2,800 · 3 cuotas vencidas · Sin beca. Situación económica crítica.',
+    crm:'1 ticket: "no puedo pagar, quiero retirarme". Urgente — alta probabilidad de retiro voluntario.',
+    diagnostico:'Xiomara tiene el score más alto de la bandeja. Ingresante en situación económica crítica con ticket de retiro activo. Si no hay intervención en las próximas 48h, el retiro es muy probable. La baja asistencia ya generó irreversibilidad en algunos cursos. <span class="dhl">Causa raíz: barrera económica crítica en primer ciclo. INTERVENCIÓN URGENTE: beca de emergencia + llamada directa hoy.</span>',
+    nba:{
+      WhatsApp:'Hola Xiomara, soy del equipo de Apoyo Estudiantil de UPC.\n\nLeímos tu mensaje y queremos ayudarte — no tienes que retirarte.\n\nTenemos una beca de emergencia que puede cubrir el 25% de tu pensión y fraccionamos el resto en 6 cuotas.\n\n¿Podemos llamarte HOY para explicarte todo?\n\nResponde SÍ — es urgente y te llamamos en menos de 1 hora.',
+      Email:'Estimada Xiomara,\n\nRecibimos tu solicitud y queremos hablar contigo antes de proceder con cualquier trámite de retiro.\n\nContamos con recursos de apoyo económico de emergencia que podrían cambiar tu situación:\n• Beca socioeconómica de emergencia\n• Fraccionamiento en 6 cuotas\n• Congelamiento de deuda por 30 días\n\nPor favor contáctanos hoy — es importante.\n\nEquipo de Bienestar · UPC · Tel: 625-4200',
+      Llamada:'[URGENTE] Llamar HOY antes de las 5pm.\n[Apertura] Hola Xiomara, llamo del área de Bienestar de UPC — leí tu ticket y quiero ayudarte personalmente.\n— NUNCA mencionar retiro como opción\n— Tono: muy empático, como si fuera la primera vez que habla con alguien de la universidad\n— Oferta: beca de emergencia + fraccionamiento + congelamiento 30 días\n— Escalación: si no responde, llamar a contacto de emergencia en el sistema\n— Cierre: "¿Cuándo puedo llamarte hoy?"'
+    },
+    historial:['22 Mar — Ticket URGENTE: solicitud de retiro voluntario','20 Mar — Sin asistencia semana 8','15 Mar — Cuota 3 vencida'],
+    similares:'7 casos de retiro solicitado este ciclo. 5 de 7 revertidos con intervención en menos de 48h (71.4%).'
+  },
+  {
+    id:'s10', nombre:'Óscar', apellido:'Salinas Flores', ini:'OS', color:'#2563EB',
+    carrera:'Derecho Empresarial', facultad:'Fac. de Derecho', ciclo:8,
+    pp:17.2, asistencia:97, deuda:0, beca:true, diasSinGestion:1,
+    tickets:0, practicas:true, turno:'Mañana', sede:'San Isidro',
+    causal:'solicitud_traslado_sede', nivel:'BAJO', score:18, estado:'matriculado',
+    valor:82000, canal:'Email', telefono:'oscar.salinas@upc.edu.pe',
+    academico:'PP 17.2 · Asist. 97% · Mejor alumno del ciclo en su facultad. Prácticas en estudio jurídico.',
+    financiero:'Sin deuda · Beca de excelencia full activa.',
+    crm:'Sin tickets. Gestión proactiva previa — caso cerrado exitosamente.',
+    diagnostico:'Óscar es un estudiante de excelencia que fue gestionado proactivamente el ciclo pasado cuando solicitó información sobre traslado. Se ofreció una reunión con el Director de Escuela y quedó satisfecho con la respuesta. <span class="dhl">Caso cerrado · Retención exitosa · Referente para el programa de embajadores estudiantiles.</span>',
+    nba:{
+      WhatsApp:'Hola Óscar 🌟\n\nSolo queríamos saludarte — tu desempeño este ciclo ha sido extraordinario (PP 17.2, Top 1%).\n\nEstamos evaluando un programa de Embajadores Estudiantiles y tu perfil es exactamente lo que buscamos. ¿Te interesaría conocer más?\n\nResponde cuando puedas — sin compromiso.',
+      Email:'Estimado Óscar,\n\nCon motivo del cierre del ciclo 2026-1, queremos reconocer tu destacada trayectoria académica.\n\nEn reconocimiento a tu desempeño (PP 17.2), te invitamos a participar en nuestro Programa de Embajadores Estudiantiles UPC.\n\nSi te interesa, con gusto coordinamos una reunión.\n\nEquipo de Retención · UPC',
+      Llamada:'[Caso de éxito - contacto de seguimiento]\n— No hay intervención de retención requerida\n— Contacto de reconocimiento y fidelización\n— Invitación al programa de embajadores\n— Oportunidad de testimonial para campañas'
+    },
+    historial:['Semana 1 — Gestión proactiva: reunión con Director de Escuela','Ciclo 2025-2 — Retención exitosa tras consulta de traslado'],
+    similares:'Perfil de embajador — caso de éxito para comunicaciones institucionales.'
+  },
+  // Estudiantes adicionales (11-20) con menos detalle para llenar la cola
+  {id:'s11',nombre:'Diego',apellido:'Ramos Huanca',ini:'DR',color:'#059669',carrera:'Administración y Negocios Digitales',facultad:'Fac. de Negocios',ciclo:3,pp:12.8,asistencia:70,deuda:1500,beca:false,diasSinGestion:8,tickets:1,practicas:false,turno:'Tarde',sede:'Monterrico',causal:'deuda_pension',nivel:'ALTO',score:75,estado:'sin_gestionar',valor:21400,canal:'WhatsApp',telefono:'+51 987 111 222',academico:'PP 12.8 · Asist. 70% · 1 curso con riesgo.',financiero:'Deuda S/ 1,500 · 2 cuotas vencidas.',crm:'1 ticket de deuda. Respondió hace 1 semana.',diagnostico:'Deuda activa con baja asistencia. Riesgo combinado. <span class="dhl">Intervención: fraccionamiento + seguimiento semanal.</span>',nba:{WhatsApp:'Hola Diego, podemos fraccionar tu deuda de S/ 1,500 en 3 cuotas sin interés. ¿Coordinamos esta semana?',Email:'Estimado Diego, hemos revisado tu situación y podemos ofrecerte fraccionamiento de deuda en cuotas sin recargo. Contáctanos.',Llamada:'[Apertura] Hola Diego, llamo sobre la deuda y el seguimiento académico. Tenemos una propuesta de fraccionamiento para esta semana.'},historial:['15 Mar — WhatsApp respondido','8 Mar — Ticket deuda creado'],similares:'Patrón frecuente. 65% de retención con fraccionamiento.'},
+  {id:'s12',nombre:'Milagros',apellido:'Ccopa Apaza',ini:'MC',color:'#D97706',carrera:'Contabilidad y Finanzas',facultad:'Fac. de Economía y Finanzas',ciclo:2,pp:11.2,asistencia:58,deuda:1100,beca:false,diasSinGestion:9,tickets:0,practicas:false,turno:'Noche',sede:'San Isidro',causal:'riesgo_academico',nivel:'ALTO',score:78,estado:'sin_gestionar',valor:16800,canal:'WhatsApp',telefono:'+51 956 333 444',academico:'PP 11.2 · Asist. 58% · 2 cursos jalando.',financiero:'Deuda S/ 1,100 · 1 cuota vencida.',crm:'Sin tickets. Sin contacto previo.',diagnostico:'Riesgo académico y financiero combinado en ciclo 2. <span class="dhl">Intervención: tutoría urgente + fraccionamiento.</span>',nba:{WhatsApp:'Hola Milagros, notamos que este ciclo ha sido exigente. Podemos ayudarte con tutoría gratuita y fraccionar tu deuda. ¿Conversamos?',Email:'Estimada Milagros, queremos apoyarte con tutoría académica y opciones de pago flexible. Contáctanos esta semana.',Llamada:'[Apertura] Hola Milagros, llamo de Bienestar UPC. Queremos conocer cómo te ha ido este ciclo y cómo podemos apoyarte.'},historial:['Primera gestión de Persistia — sin contacto previo'],similares:'13 casos similares. 70% retención con intervención temprana.'},
+  {id:'s13',nombre:'Fernando',apellido:'Vargas Condori',ini:'FV',color:'#7C3AED',carrera:'Ingeniería de Software',facultad:'Fac. de Ingeniería',ciclo:4,pp:13.5,asistencia:75,deuda:800,beca:true,diasSinGestion:4,tickets:1,practicas:true,turno:'Tarde',sede:'San Isidro',causal:'retiro_de_cursos',nivel:'MEDIO',score:48,estado:'en_seguimiento',valor:31200,canal:'Email',telefono:'fernando.vargas@upc.edu.pe',academico:'PP 13.5 · Asist. 75% · Solicitó retiro de 1 curso electivo.',financiero:'Deuda S/ 800 · 1 cuota · Beca activa.',crm:'1 ticket: retiro de 1 electivo por carga laboral.',diagnostico:'Carga de prácticas + trabajo. Solicitud de retiro menor. <span class="dhl">Intervención: aprobar retiro + regularizar cuota.</span>',nba:{WhatsApp:'Hola Fernando, aprobamos el retiro de tu electivo. Tu beca se mantiene. ¿Regularizamos la cuota esta semana?',Email:'Estimado Fernando, retiro de electivo aprobado. Beca activa. Cuota pendiente puede fraccionarse en 2 pagos.',Llamada:'Retiro aprobado. Coordinar regularización de cuota.'},historial:['20 Mar — Ticket retiro electivo','16 Mar — Cuota vencida'],similares:'Caso estándar. 88% retención.'},
+  {id:'s14',nombre:'Yanira',apellido:'Palomino Sánchez',ini:'YP',color:'#DC2626',carrera:'Psicología Organizacional',facultad:'Fac. de Psicología',ciclo:5,pp:10.1,asistencia:42,deuda:3200,beca:false,diasSinGestion:18,tickets:2,practicas:false,turno:'Mañana',sede:'Monterrico',causal:'deuda_pension',nivel:'ALTO',score:91,estado:'sin_gestionar',valor:29800,canal:'Llamada',telefono:'+51 904 667 889',academico:'PP 10.1 · Asist. 42% · 4 cursos en riesgo crítico.',financiero:'Deuda S/ 3,200 · 3 cuotas vencidas · Sin beca.',crm:'2 tickets: deuda + consulta retiro total.',diagnostico:'Score alto. Deuda crítica con riesgo de retiro total. <span class="dhl">URGENTE: llamada directa + paquete integral de retención.</span>',nba:{WhatsApp:'Yanira, queremos ayudarte a continuar. Tenemos beca de emergencia + fraccionamiento disponible para ti. ¿Podemos llamarte hoy?',Email:'Estimada Yanira, antes de proceder con el retiro, queremos ofrecerte alternativas concretas. Llámanos al 625-4200.',Llamada:'[URGENTE] Llamar hoy. Ofrecer paquete completo: beca + fraccionamiento 6 cuotas + tutoría. Evitar retiro total.'},historial:['19 Mar — Ticket 2: consulta retiro total','10 Mar — Ticket 1: deuda vencida'],similares:'Score crítico. Prioridad máxima.'},
+  {id:'s15',nombre:'Luis',apellido:'Mendoza García',ini:'LM',color:'#0D9488',carrera:'Marketing Digital',facultad:'Fac. de Comunicaciones',ciclo:6,pp:16.1,asistencia:92,deuda:0,beca:true,diasSinGestion:0,tickets:0,practicas:true,turno:'Tarde',sede:'San Isidro',causal:'cambio_de_turno',nivel:'BAJO',score:12,estado:'matriculado',valor:34500,canal:'Email',telefono:'luis.mendoza@upc.edu.pe',academico:'PP 16.1 · Asist. 92% · Excelente desempeño.',financiero:'Sin deuda · Beca activa.',crm:'Sin tickets. Gestión previa exitosa.',diagnostico:'Estudiante de alto rendimiento ya retenido. <span class="dhl">Caso de éxito — fidelización.</span>',nba:{WhatsApp:'Hola Luis, ¡gran ciclo! Tu PP 16.1 es destacado. ¿Te interesa el programa de mentoring estudiantil?',Email:'Estimado Luis, ciclo exitoso. Invitación al programa de embajadores UPC.',Llamada:'Contacto de fidelización. Caso de éxito.'},historial:['Gestión previa exitosa ciclo 2025-2'],similares:'Perfil de embajador.'},
+  {id:'s16',nombre:'Andrea',apellido:'Flores Mamani',ini:'AF',color:'#DB2777',carrera:'Arquitectura',facultad:'Fac. de Arquitectura',ciclo:3,pp:13.8,asistencia:68,deuda:1600,beca:false,diasSinGestion:11,tickets:1,practicas:false,turno:'Mañana',sede:'Villa',causal:'deuda_pension',nivel:'ALTO',score:73,estado:'sin_gestionar',valor:23100,canal:'WhatsApp',telefono:'+51 956 445 667',academico:'PP 13.8 · Asist. 68% · 2 cursos en riesgo.',financiero:'Deuda S/ 1,600 · 2 cuotas vencidas.',crm:'1 ticket deuda. Respondió brevemente.',diagnostico:'Deuda activa con asistencia baja. Sede Villa dificulta gestión. <span class="dhl">Intervención: fraccionamiento remoto via WhatsApp.</span>',nba:{WhatsApp:'Hola Andrea, podemos resolver tu deuda de S/ 1,600 en 4 cuotas sin interés directamente por este medio. ¿Te cuadra?',Email:'Estimada Andrea, fraccionamiento de deuda disponible. No necesitas venir al campus.',Llamada:'Fraccionamiento y seguimiento remoto. Sede Villa.'},historial:['17 Mar — WhatsApp: respuesta breve','9 Mar — Ticket deuda'],similares:'Patrón de deuda en sede Villa. 67% retención con gestión remota.'},
+  {id:'s17',nombre:'Sebastián',apellido:'Cruz Rojas',ini:'SC',color:'#2563EB',carrera:'Ingeniería de Software',facultad:'Fac. de Ingeniería',ciclo:8,pp:15.7,asistencia:85,deuda:0,beca:true,diasSinGestion:2,tickets:0,practicas:true,turno:'Mañana',sede:'San Isidro',causal:'solicitud_traslado_sede',nivel:'BAJO',score:22,estado:'en_seguimiento',valor:58900,canal:'Email',telefono:'sebastian.cruz@upc.edu.pe',academico:'PP 15.7 · Asist. 85% · Ciclo pre-tesis. Prácticas en empresa tech.',financiero:'Sin deuda · Beca activa.',crm:'Consulta sobre proceso de tesis. Respondido por coordinación.',diagnostico:'Estudiante de buen rendimiento en fase final. Caso de seguimiento estándar. <span class="dhl">Sin riesgo real — seguimiento preventivo.</span>',nba:{WhatsApp:'Hola Sebastián, ¿cómo va el proyecto de tesis? Si necesitas orientación, tu tutor Ing. Pérez tiene disponibilidad esta semana.',Email:'Estimado Sebastián, seguimiento de ciclo pre-tesis. Tutor disponible para asesoría.',Llamada:'Seguimiento preventivo. Alto valor. Sin urgencia.'},historial:['22 Mar — Consulta proceso de tesis resuelta'],similares:'Caso estándar de seguimiento pre-tesis.'},
+  {id:'s18',nombre:'Gabriela',apellido:'López Torres',ini:'GL',color:'#059669',carrera:'Administración y Negocios Digitales',facultad:'Fac. de Negocios',ciclo:1,pp:11.5,asistencia:55,deuda:900,beca:false,diasSinGestion:13,tickets:1,practicas:false,turno:'Noche',sede:'Monterrico',causal:'riesgo_academico',nivel:'ALTO',score:80,estado:'sin_gestionar',valor:14200,canal:'WhatsApp',telefono:'+51 987 778 990',academico:'PP 11.5 · Asist. 55% · Ingresante con dificultades en matemáticas.',financiero:'Deuda S/ 900 · 1 cuota vencida.',crm:'1 ticket: "no entiendo los cursos de matemáticas".',diagnostico:'Ingresante con brecha de conocimiento en ciencias básicas. <span class="dhl">Intervención: nivelación + tutoría + fraccionamiento.</span>',nba:{WhatsApp:'Hola Gabriela, vimos que matemáticas ha sido difícil. Tenemos tutoría gratuita 2 veces por semana y podemos fraccionar tu cuota. ¿Empezamos esta semana?',Email:'Estimada Gabriela, programa de nivelación en matemáticas disponible sin costo. Fraccionamiento de cuota también aprobado.',Llamada:'Ofrecer nivelación + tutoría + fraccionamiento como paquete.'},historial:['18 Mar — Ticket dificultad matemáticas','12 Mar — Cuota vencida'],similares:'Patrón frecuente en ingresantes. 72% retención con nivelación.'},
+  {id:'s19',nombre:'Juan',apellido:'Quispe Mamani',ini:'JQ',color:'#7C3AED',carrera:'Contabilidad y Finanzas',facultad:'Fac. de Economía y Finanzas',ciclo:5,pp:14.4,asistencia:82,deuda:500,beca:true,diasSinGestion:3,tickets:0,practicas:true,turno:'Tarde',sede:'San Isidro',causal:'deuda_pension',nivel:'MEDIO',score:41,estado:'en_seguimiento',valor:27600,canal:'WhatsApp',telefono:'+51 912 889 001',academico:'PP 14.4 · Asist. 82% · Buen desempeño. Prácticas en Big 4.',financiero:'Deuda S/ 500 · 1 cuota vencida · Beca activa (riesgo si no paga).',crm:'Sin tickets. Historial de pagos puntuales.',diagnostico:'Cuota vencida menor. Buen historial. Prácticas en Big 4 sugieren capacidad de pago. <span class="dhl">Intervención mínima: recordatorio de pago, beca en riesgo si no regulariza.</span>',nba:{WhatsApp:'Hola Juan, ¿todo bien? Tienes una cuota de S/ 500 pendiente que podría afectar tu beca. ¿La regularizamos esta semana?',Email:'Estimado Juan, cuota de S/ 500 pendiente. Tu beca requiere regularización antes del 31 de marzo.',Llamada:'Recordatorio de cuota y riesgo de beca. Caso menor.'},historial:['21 Mar — Cuota vencida registrada'],similares:'Caso menor. 95% regularización con recordatorio.'},
+  {id:'s20',nombre:'Karen',apellido:'Silva Vargas',ini:'KS',color:'#D97706',carrera:'Medicina Humana',facultad:'Fac. de Ciencias de la Salud',ciclo:4,pp:15.9,asistencia:91,deuda:0,beca:true,diasSinGestion:0,tickets:1,practicas:false,turno:'Mañana',sede:'San Isidro',causal:'retiro_de_cursos',nivel:'BAJO',score:28,estado:'matriculado',valor:71400,canal:'Email',telefono:'karen.silva@upc.edu.pe',academico:'PP 15.9 · Asist. 91% · Alto rendimiento. Retiro de 1 electivo voluntario.',financiero:'Sin deuda · Beca de rendimiento activa.',crm:'1 ticket: retiro voluntario de electivo de idiomas por carga clínica.',diagnostico:'Estudiante de alto rendimiento que gestiona su carga académica proactivamente. Retiro de electivo menor. <span class="dhl">Sin riesgo real — aprobar retiro y mantener relación.</span>',nba:{WhatsApp:'Hola Karen, aprobamos el retiro del electivo de idiomas. Tu beca se mantiene sin cambios. ¡Sigue adelante!',Email:'Estimada Karen, retiro de electivo aprobado. Beca activa. Éxito en el ciclo.',Llamada:'Retiro aprobado. Contacto de mantenimiento.'},historial:['22 Mar — Ticket retiro electivo voluntario'],similares:'Caso de gestión proactiva exitosa.'}
+];
+
+// ══════════════════════════════════════════
+// SCORING ENGINE
+// ══════════════════════════════════════════
+const SEGMENTOS = [
+  {id:'g-alto-fin', name:'Riesgo ALTO · Deuda de pensión', color:'var(--r)',
+   criterio:'deuda_pension > S/500 AND nivel_riesgo = ALTO',
+   fn:s=>s.deuda>500&&s.nivel==='ALTO', badge:'cr'},
+  {id:'g-ingresantes', name:'Ingresantes · Ciclo I', color:'var(--b)',
+   criterio:'ciclo_academico = 1 (ingresante)',
+   fn:s=>s.ciclo===1, badge:'cb'},
+  {id:'g-alto-val', name:'Alto rendimiento · Últimos ciclos', color:'var(--g)',
+   criterio:'ciclo_academico >= 7 AND promedio_ponderado >= 15',
+   fn:s=>s.ciclo>=7&&s.pp>=15, badge:'cg'},
+  {id:'g-seguimiento', name:'En seguimiento · Reactivación', color:'var(--a)',
+   criterio:'estado_gestion = EN_SEGUIMIENTO AND score_riesgo > 35',
+   fn:s=>s.estado==='en_seguimiento'&&s.score>35, badge:'cy'},
+  {id:'g-becados', name:'Becados con alerta académica', color:'var(--p)',
+   criterio:'beneficio_economico = Sí AND nivel_riesgo != BAJO',
+   fn:s=>s.beca&&s.nivel!=='BAJO', badge:'cp'}
+];
+
+// ══════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════
+const VIEWS = {orc:'v-orc',data:'v-data',dash:'v-dash',seg:'v-seg',cfg:'v-cfg'};
+const VT = {orc:'Orquestación NBA · Bandeja activa',data:'Motor de datos · Ciclo 2026-1',dash:'Dashboards · Ciclo 2026-1',seg:'Segmentos de retención',cfg:'Configuración del sistema'};
+const VP = {orc:{t:'CICLO 2026-1 ACTIVO',c:'pg'},data:{t:'MOTOR DE DATOS',c:'pa'},dash:{t:'2026-1 · ACTUALIZADO',c:'pg'},seg:{t:'5 SEGMENTOS',c:'pn'},cfg:{t:'CONFIGURACIÓN',c:'pn'}};
+
+function go(v, el){
+  Object.values(VIEWS).forEach(id=>{ const e=document.getElementById(id); if(e)e.classList.remove('on'); });
+  document.getElementById(VIEWS[v]).classList.add('on');
+  document.querySelectorAll('.sb-i').forEach(i=>i.classList.remove('on'));
+  if(el) el.classList.add('on');
+  document.getElementById('vt').textContent = VT[v];
+  const p=VP[v];
+  document.getElementById('vp').textContent=p.t;
+  document.getElementById('vp').className='pill '+p.c;
+  document.getElementById('kbar').style.display = (v==='cfg'||v==='data')?'none':'flex';
+  const cta = document.getElementById('cta');
+  if(v==='cfg'){ cta.textContent='Guardar cambios'; }
+  else if(v==='seg'){ cta.textContent='+ Nuevo segmento'; }
+  else if(v==='data'){ cta.textContent='Cargar demos'; cta.onclick=()=>loadDemos(); }
+  else if(v==='dash'){ cta.textContent='Exportar PDF'; cta.onclick=null; }
+  else { cta.textContent='+ Nueva campaña'; cta.onclick=null; }
+}
+
+// ══════════════════════════════════════════
+// QUEUE
+// ══════════════════════════════════════════
+let activeFilter = 'todos';
+let activeSt = null;
+
+function filtQ(f, el){
+  activeFilter = f;
+  document.querySelectorAll('.qfb').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  renderQueue();
+}
+
+function renderQueue(){
+  const lista = activeFilter==='todos' ? DB :
+    activeFilter==='ALTO' ? DB.filter(s=>s.nivel==='ALTO') :
+    DB.filter(s=>s.nivel==='MEDIO');
+
+  const pending = lista.filter(s=>s.estado==='sin_gestionar').sort((a,b)=>b.score-a.score);
+  const seguimiento = lista.filter(s=>s.estado==='en_seguimiento');
+  const done = lista.filter(s=>['matriculado','desertor'].includes(s.estado));
+
+  document.getElementById('q-total').textContent = DB.length;
+  document.getElementById('sb-pend').textContent = DB.filter(s=>s.estado==='sin_gestionar').length;
+
+  let html = '';
+
+  if(pending.length){
+    html += `<div class="qlbl">Sin gestionar · ${pending.length}</div>`;
+    pending.forEach(st=>{
+      const rbCls = st.nivel==='ALTO'?'rbh':st.nivel==='MEDIO'?'rbm':'rbg';
+      const rkCls = st.nivel==='ALTO'?'rh':'rm';
+      const chips = buildChips(st);
+      const isOn = st.id===activeSt?'on':'';
+      html += `<div class="qc ${isOn}" id="qc-${st.id}" onclick="selSt('${st.id}')">
+        <div class="rbadge ${rkCls}">${st.score}%</div>
+        <div class="qrow">
+          <div class="qav" style="background:${st.color}">${st.ini}</div>
+          <div><div class="qname">${st.nombre} ${st.apellido.split(' ')[0]}</div>
+          <div class="qsub">${st.carrera.split(' ')[0]} · ${st.ciclo}° ciclo</div></div>
+        </div>
+        <div class="rb"><div class="rbf ${rbCls}" style="width:${st.score}%"></div></div>
+        <div class="chips">${chips}</div>
+      </div>`;
+    });
+  }
+
+  if(seguimiento.length){
+    html += `<div class="qlbl">En seguimiento · ${seguimiento.length}</div>`;
+    seguimiento.forEach(st=>{
+      const isOn = st.id===activeSt?'on':'';
+      html += `<div class="qc ${isOn}" id="qc-${st.id}" onclick="selSt('${st.id}')">
+        <div class="rbadge" style="background:var(--a)">${st.score}%</div>
+        <div class="qrow">
+          <div class="qav" style="background:${st.color}">${st.ini}</div>
+          <div><div class="qname">${st.nombre} ${st.apellido.split(' ')[0]}</div>
+          <div class="qsub">En seguimiento · ${st.carrera.split(' ')[0]}</div></div>
+        </div>
+      </div>`;
+    });
+  }
+
+  if(done.length){
+    html += `<div class="qlbl">Gestionados · ${done.length}</div>`;
+    done.forEach(st=>{
+      const lbl = st.estado==='matriculado'?'Matriculado ✓':'Desertor';
+      html += `<div class="qc done">
+        <div class="qrow">
+          <div class="qav" style="background:#CBD5DA;font-size:10px">✓</div>
+          <div><div class="qname" style="color:var(--t3)">${st.nombre} ${st.apellido.split(' ')[0]}</div>
+          <div class="qsub">${lbl}</div></div>
+        </div>
+      </div>`;
+    });
+  }
+
+  document.getElementById('qlist').innerHTML = html;
+}
+
+function buildChips(st){
+  const c = [];
+  if(st.deuda>500) c.push(`<span class="chip cr">Deuda S/ ${st.deuda.toLocaleString()}</span>`);
+  if(st.asistencia<65) c.push(`<span class="chip cy">Asist. ${st.asistencia}%</span>`);
+  if(st.pp<11) c.push(`<span class="chip cr">PP ${st.pp}</span>`);
+  if(st.tickets>0) c.push(`<span class="chip cb">${st.tickets} ticket${st.tickets>1?'s':''} CRM</span>`);
+  if(st.diasSinGestion>14) c.push(`<span class="chip cy">${st.diasSinGestion}d sin gestión</span>`);
+  if(st.practicas) c.push(`<span class="chip cg">Prácticas</span>`);
+  return c.slice(0,2).join('');
+}
+
+// ══════════════════════════════════════════
+// DETAIL PANEL
+// ══════════════════════════════════════════
+let activeCanalIdx = 0;
+const CANALES = ['WhatsApp','Email','Llamada'];
+
+function selSt(id){
+  activeSt = id;
+  activeCanalIdx = 0;
+  // Update queue selection
+  document.querySelectorAll('.qc').forEach(c=>c.classList.remove('on'));
+  const el = document.getElementById('qc-'+id);
+  if(el) el.classList.add('on');
+
+  const st = DB.find(s=>s.id===id);
+  if(!st) return;
+
+  const rColor = st.nivel==='ALTO'?'var(--r)':st.nivel==='MEDIO'?'var(--a)':'var(--g)';
+  const canInfo = {WhatsApp:st.telefono, Email:st.telefono, Llamada:st.telefono};
+
+  document.getElementById('det-body').innerHTML = `
+    <div class="card">
+      <div class="pt">
+        <div>
+          <div class="pnom">${st.nombre} ${st.apellido}</div>
+          <div class="pmeta">ID ${st.id.toUpperCase()} · Ciclo ${st.ciclo} · ${st.turno} · ${st.sede} · <span class="psv">S/ ${st.valor.toLocaleString()}</span></div>
+        </div>
+        <div class="rg">
+          <div class="rgn" style="color:${rColor}">${st.score}%</div>
+          <div class="rgl">Score riesgo deserción</div>
+          <div style="margin-top:4px"><span class="chip ${st.nivel==='ALTO'?'cr':st.nivel==='MEDIO'?'cy':'cg'}" style="font-size:9.5px;padding:2px 7px">${st.nivel}</span></div>
+        </div>
+      </div>
+      <div class="srcs">
+        <div class="src">
+          <div class="sl"><span class="sdot sdg"></span>Académico · SIA</div>
+          <div class="stxt">${st.academico}</div>
+        </div>
+        <div class="src ${st.deuda>0?'alt':''}">
+          <div class="sl ${st.deuda>0?'al':''}"><span class="sdot ${st.deuda>0?'sdr':'sdg'}"></span>Financiero · SAP</div>
+          <div class="stxt">${st.financiero}</div>
+        </div>
+        <div class="src">
+          <div class="sl"><span class="sdot sdn"></span>CRM · Tickets</div>
+          <div class="stxt">${st.crm}</div>
+        </div>
+      </div>
+      <div class="diag">
+        <div class="dbar"></div>
+        <div>
+          <div class="dlbl">Diagnóstico · Persista</div>
+          <div class="dtxt">${st.diagnostico}</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="nbah">
+        <div class="nbat">
+          <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Next Best Action · ${st.nombre}
+        </div>
+        <div class="chsw" id="chsw">
+          ${CANALES.map((c,i)=>`<button class="chb ${i===0?'on':''}" onclick="swCanalDet(${i},this)">${c}</button>`).join('')}
+        </div>
+      </div>
+      <div class="msgbx" id="det-msg" contenteditable="false">${st.nba[CANALES[0]]||''}</div>
+      <div class="nbaff">
+        <span class="chinfo" id="det-chinfo">${CANALES[0]} · ${st.telefono}</span>
+        <div style="display:flex;gap:5px">
+          <button class="btn bg btn-xs" onclick="editDetMsg()">Editar</button>
+          <button class="btn bn btn-xs" id="det-send" onclick="sendDetMsg('${st.nombre}')">Aprobar y enviar</button>
+        </div>
+      </div>
+    </div>`;
+
+  // Update agent
+  document.getElementById('ag-ctx').textContent = `${st.nombre} · Score ${st.score}%`;
+  document.getElementById('agqb').style.display = 'flex';
+
+  const m = document.getElementById('agmsgs');
+  m.innerHTML = '';
+  addAgMsg('u', `Analiza a ${st.nombre} ${st.apellido}`);
+  addAgTr('Perfil 360 cargado desde SIA + SAP + CRM');
+  addAgTr('Score calculado: '+st.score+'% · Nivel '+st.nivel);
+  addAgMsg('a', `<b>${st.score}% de riesgo de deserción · Nivel ${st.nivel}.</b><br><br>${st.diagnostico.replace(/<[^>]*>/g,'')}`);
+  addAgMsg('u', 'Genera el mensaje NBA');
+  addAgTr('Canal óptimo detectado: '+st.canal);
+  addAgMsg('a', `Mensaje redactado para <b>${st.canal}</b>. Personalizado con datos de las 3 fuentes — mención al causal específico y oferta concreta.`);
+  m.scrollTop = m.scrollHeight;
+}
+
+function swCanalDet(idx, btn){
+  activeCanalIdx = idx;
+  document.querySelectorAll('#chsw .chb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const st = DB.find(s=>s.id===activeSt);
+  if(!st) return;
+  const canal = CANALES[idx];
+  document.getElementById('det-msg').textContent = st.nba[canal] || '';
+  document.getElementById('det-chinfo').textContent = canal+' · '+st.telefono;
+}
+
+function editDetMsg(){
+  const b=document.getElementById('det-msg');
+  const btn=document.querySelector('.nbaff .btn.bg');
+  if(b.contentEditable==='true'){
+    b.contentEditable='false';btn.textContent='Editar';b.style.outline='';
+  } else {
+    b.contentEditable='true';btn.textContent='Guardar';
+    b.style.outline='2px solid var(--t1)';b.style.outlineOffset='2px';b.focus();
+  }
+}
+
+function sendDetMsg(nombre){
+  const btn=document.getElementById('det-send');
+  btn.textContent='Enviando...';btn.style.background='var(--a)';
+  setTimeout(()=>{
+    btn.textContent='Entregado ✓';btn.style.background='var(--g)';btn.disabled=true;
+    addAgTr('Mensaje enviado a '+nombre+' via '+CANALES[activeCanalIdx]);
+    addAgMsg('a', `Enviado correctamente. Te notificamos cuando ${nombre} responda.`);
+    document.getElementById('agmsgs').scrollTop=9999;
+    toast('Mensaje enviado a '+nombre);
+  },1200);
+}
+
+// ══════════════════════════════════════════
+// AGENT RESPONSES (hardcoded por contexto)
+// ══════════════════════════════════════════
+function agResp(tipo){
+  if(!activeSt){ addAgMsg('a','Selecciona un estudiante primero.'); return; }
+  const st = DB.find(s=>s.id===activeSt);
+
+  const resps = {
+    plan_b: `Plan B para ${st.nombre}: si no responde en 48h, escalar a llamada directa al ${st.telefono}. Si sigue sin respuesta, activar alerta al coordinador de carrera de ${st.facultad}. Último recurso: contacto con apoderado registrado en SIGA.`,
+    historial: `Historial de gestión de ${st.nombre}:\n${st.historial.map(h=>'• '+h).join('\n')}`,
+    similares: st.similares,
+    escalacion: `Escalación activada para ${st.nombre} (Score ${st.score}%). Notificando a: Coordinador de ${st.facultad} + Jefe de Retención. Motivo: ${st.causal.replace(/_/g,' ')}. Tiempo sin gestión: ${st.diasSinGestion} días.`
+  };
+
+  addAgMsg('u', tipo==='plan_b'?'Plan B si no responde':tipo==='historial'?'Historial de contacto':tipo==='similares'?'Casos similares':'Escalar caso');
+  setTimeout(()=>{ addAgMsg('a', resps[tipo]||'Sin información disponible.'); document.getElementById('agmsgs').scrollTop=9999; }, 400);
+}
+
+const RESPUESTAS_LIBRES = {
+  'beca':      s=>`Para ${s.nombre}: ${s.beca?'tiene beca activa, mantenerla es clave para evitar deserción.':'no tiene beca activa. Se puede gestionar beca socioeconómica de emergencia si deuda > S/ 500.'}`,
+  'deuda':     s=>`Deuda de ${s.nombre}: S/ ${s.deuda.toLocaleString()}. ${s.deuda>0?'Se puede fraccionar en hasta 6 cuotas sin interés.':'Sin deuda pendiente.'}`,
+  'canal':     s=>`Canal óptimo para ${s.nombre}: ${s.canal}. Basado en historial de respuesta y tipo de causal (${s.causal.replace(/_/g,' ')}).`,
+  'oferta':    s=>`Oferta recomendada para ${s.nombre}: ${s.diagnostico.split('Intervención:')[1]?.replace(/<[^>]*>/g,'').trim()||'ver diagnóstico completo.'}`,
+  'riesgo':    s=>`${s.nombre} tiene score ${s.score}% (${s.nivel}). Los factores principales son: deuda S/${s.deuda.toLocaleString()}, asistencia ${s.asistencia}%, PP ${s.pp}.`,
+  'contacto':  s=>`Último contacto con ${s.nombre}: hace ${s.diasSinGestion} días. Contactar via ${s.canal} al ${s.telefono}.`,
+  'tutoría':   s=>`${s.pp<13?`Tutoría recomendada para ${s.nombre} (PP ${s.pp}<13). Disponibilidad: 14 tutores, 68 slots esta semana.`:`PP ${s.pp} de ${s.nombre} está sobre el umbral. Tutoría opcional como apoyo preventivo.`}`,
+};
+
+function agSend(){
+  const inp=document.getElementById('agin'), txt=inp.value.trim();
+  if(!txt) return;
+  inp.value='';
+  addAgMsg('u', txt);
+
+  setTimeout(()=>{
+    if(!activeSt){
+      addAgMsg('a','Selecciona un estudiante de la cola para que pueda darte información específica.');
+      document.getElementById('agmsgs').scrollTop=9999;
+      return;
+    }
+    const st = DB.find(s=>s.id===activeSt);
+    const lc = txt.toLowerCase();
+    let resp = null;
+    for(const[kw, fn] of Object.entries(RESPUESTAS_LIBRES)){
+      if(lc.includes(kw)){ resp = fn(st); break; }
+    }
+    if(!resp){
+      // Fallback genérico contextualizado
+      resp = `Sobre ${st.nombre} (Score ${st.score}% · ${st.nivel}): ${st.diagnostico.replace(/<[^>]*>/g,'').substring(0,200)}...`;
+    }
+    addAgMsg('a', resp);
+    document.getElementById('agmsgs').scrollTop=9999;
+  }, 500);
+}
+
+function addAgMsg(tipo, txt){
+  const m=document.getElementById('agmsgs');
+  const el=document.createElement('div');
+  el.className=tipo==='u'?'mu':'ma';
+  el.innerHTML=txt;
+  m.appendChild(el);
+}
+function addAgTr(txt){
+  const m=document.getElementById('agmsgs');
+  const el=document.createElement('div');
+  el.className='tr';
+  el.innerHTML=`<div class="td"></div>${txt}`;
+  m.appendChild(el);
+}
+
+// ══════════════════════════════════════════
+// SEGMENTOS
+// ══════════════════════════════════════════
+let activeSegId = 'g-alto-fin';
+
+function renderSegNav(){
+  const nav = document.getElementById('seglist-nav');
+  nav.innerHTML = `<div style="font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.09em;padding:8px 6px 6px">Segmentos · ${SEGMENTOS.length}</div>` +
+    SEGMENTOS.map(seg=>{
+      const members = DB.filter(seg.fn);
+      const avg = members.length ? Math.round(members.reduce((a,s)=>a+s.score,0)/members.length) : 0;
+      return `<div class="sgc ${seg.id===activeSegId?'on':''}" onclick="selSeg('${seg.id}')">
+        <div class="sgname"><span class="sgdot" style="background:${seg.color}"></span>${seg.name}</div>
+        <div class="sgmeta">${members.length} estudiantes · score prom. ${avg}%</div>
+      </div>`;
+    }).join('');
+}
+
+function selSeg(id){
+  activeSegId = id;
+  renderSegNav();
+  const seg = SEGMENTOS.find(s=>s.id===id);
+  const members = DB.filter(seg.fn).sort((a,b)=>b.score-a.score);
+  const avg = members.length ? Math.round(members.reduce((a,s)=>a+s.score,0)/members.length) : 0;
+  const valorTotal = members.reduce((a,s)=>a+s.valor,0);
+
+  document.getElementById('segdet-body').innerHTML = `
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:11px">
+        <span class="sgdot" style="background:${seg.color};width:10px;height:10px"></span>
+        <span style="font-size:15px;font-weight:400">${seg.name}</span>
+        <button class="btn bd btn-xs" style="margin-left:auto" onclick="toast('Campaña creada para segmento: ${seg.name}')">Crear campaña</button>
+      </div>
+      <div style="font-size:10.5px;color:var(--t3);margin-bottom:12px">
+        Criterio: <code style="background:var(--s1);padding:2px 8px;border-radius:4px;font-family:var(--mono);font-size:10px">${seg.criterio}</code>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:14px">
+        <div style="background:var(--s1);border-radius:7px;padding:10px 12px"><div class="kl">Estudiantes</div><div style="font-size:20px;font-weight:600;font-family:var(--mono)">${members.length}</div></div>
+        <div style="background:var(--s1);border-radius:7px;padding:10px 12px"><div class="kl">Score promedio</div><div style="font-size:20px;font-weight:600;font-family:var(--mono);color:${seg.color}">${avg}%</div></div>
+        <div style="background:var(--s1);border-radius:7px;padding:10px 12px"><div class="kl">Ingreso potencial</div><div style="font-size:20px;font-weight:600;font-family:var(--mono);color:var(--g)">S/ ${(valorTotal/1000).toFixed(0)}K</div></div>
+        <div style="background:var(--s1);border-radius:7px;padding:10px 12px"><div class="kl">Sin gestionar</div><div style="font-size:20px;font-weight:600;font-family:var(--mono);color:var(--r)">${members.filter(s=>s.estado==='sin_gestionar').length}</div></div>
+      </div>
+      <table class="dtable">
+        <thead><tr><th>Nombre</th><th>Carrera</th><th>Ciclo</th><th style="text-align:right">Score</th><th style="text-align:right">PP</th><th style="text-align:right">Deuda</th><th style="text-align:right">Estado</th></tr></thead>
+        <tbody>${members.map(st=>{
+          const sCls = st.nivel==='ALTO'?'cr':st.nivel==='MEDIO'?'cy':'cg';
+          const eCls = {sin_gestionar:'cy',en_seguimiento:'cb',matriculado:'cg',desertor:'cr'}[st.estado]||'cy';
+          const eLbl = {sin_gestionar:'Sin gestionar',en_seguimiento:'En seguimiento',matriculado:'Matriculado',desertor:'Desertor'}[st.estado]||'—';
+          return `<tr style="cursor:pointer" onclick="go('orc',document.querySelector('.sb-i.on'));selSt('${st.id}')">
+            <td style="font-weight:500">${st.nombre} ${st.apellido.split(' ')[0]}</td>
+            <td style="color:var(--t3)">${st.carrera.split(' ')[0]}</td>
+            <td style="font-family:var(--mono);color:var(--t3)">${st.ciclo}°</td>
+            <td style="text-align:right"><span class="chip ${sCls}">${st.score}%</span></td>
+            <td style="text-align:right;font-family:var(--mono)">${st.pp}</td>
+            <td style="text-align:right;font-family:var(--mono)">${st.deuda>0?'S/ '+st.deuda.toLocaleString():'—'}</td>
+            <td style="text-align:right"><span class="chip ${eCls}">${eLbl}</span></td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>`;
+}
+
+// ══════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════
+function showCfg(id, el){
+  ['c-ben','c-mx','c-ch','c-rules','c-int'].forEach(s=>{
+    const e=document.getElementById(s); if(e)e.style.display='none';
+  });
+  document.getElementById(id).style.display='block';
+  document.querySelectorAll('.cni').forEach(i=>i.classList.remove('on'));
+  if(el) el.classList.add('on');
+}
+
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+function toast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('tmsg').textContent=msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+
+// ══════════════════════════════════════════
+// MOTOR DE DATOS
+// ══════════════════════════════════════════
+let deUps = {a:false, f:false, c:false};
+
+function simUpload(src){
+  deUps[src] = true;
+  const uc = document.getElementById('uc-'+src);
+  const fp = document.getElementById('fp-'+src);
+  const pb = document.getElementById('pb-'+src);
+  const fe = document.getElementById('fe-'+src);
+  fp.classList.add('show');
+  // Animate progress bar
+  let w = 0;
+  const iv = setInterval(()=>{
+    w = Math.min(w + Math.random()*18+8, 100);
+    pb.style.width = w+'%';
+    if(w >= 100){
+      clearInterval(iv);
+      uc.classList.add('done');
+      fe.style.display = 'inline-block';
+      // Check if all 3 uploaded
+      if(deUps.a && deUps.f && deUps.c){
+        document.getElementById('de-cta-bar').style.display = 'flex';
+        toast('3 archivos listos · 519 problemas detectados');
+      }
+    }
+  }, 80);
+}
+
+function loadDemos(){
+  ['a','f','c'].forEach(s=>{ if(!deUps[s]) simUpload(s); });
+}
+
+function fixIssue(btn, id){
+  const row = document.getElementById(id);
+  row.classList.add('fixed');
+  btn.textContent = 'Aplicado ✓';
+  btn.className = 'iact iag';
+  btn.disabled = true;
+}
+
+const DE_LOGS = [
+  {t:'09:14:33',s:'engine',sc:'lse',tp:'INFO',tc:'lin',m:'Pipeline ETL iniciado · 3 fuentes · 3,641 registros brutos'},
+  {t:'09:14:34',s:'sia',sc:'lsa',tp:'WARN',tc:'lwn',m:'Encoding ISO-8859-1 detectado → convirtiendo a UTF-8 · 67 registros'},
+  {t:'09:14:34',s:'sia',sc:'lsa',tp:'FIX',tc:'lfx',m:'"FERN√NDEZ" → "FERNÁNDEZ" y 65 nombres más corregidos'},
+  {t:'09:14:35',s:'sia',sc:'lsa',tp:'ERROR',tc:'ler',m:'43 cod_alumno duplicados → conservando fila más completa'},
+  {t:'09:14:36',s:'sia',sc:'lsa',tp:'FIX',tc:'lfx',m:'28 valores promedio_ponderado fuera de rango → corregidos o marcados NULL'},
+  {t:'09:14:37',s:'sia',sc:'lsa',tp:'FIX',tc:'lfx',m:'6 formatos de fecha → ISO 8601 · 8 variantes ind_beca → boolean'},
+  {t:'09:14:38',s:'sia',sc:'lsa',tp:'FIX',tc:'lfx',m:'22 variantes cod_carrera → catálogo oficial (8 programas)'},
+  {t:'09:14:39',s:'sap',sc:'lsf',tp:'SCAN',tc:'lin',m:'SAP cargado · 3,214 filas · deuda_pension, cuotas, becas'},
+  {t:'09:14:40',s:'sap',sc:'lsf',tp:'FIX',tc:'lfx',m:'187 montos → DECIMAL(10,2) · 0 valores negativos encontrados'},
+  {t:'09:14:41',s:'crm',sc:'lsc',tp:'SCAN',tc:'lin',m:'CRM cargado · 2,062 tickets · 312 sin cod_alumno válido'},
+  {t:'09:14:42',s:'crm',sc:'lsc',tp:'FIX',tc:'lfx',m:'287 tickets resueltos por match fuzzy apellidos+carrera · 25 pendientes'},
+  {t:'09:14:43',s:'engine',sc:'lse',tp:'MERGE',tc:'lmg',m:'JOIN SIA+SAP: 3,214 matches exactos por cod_alumno'},
+  {t:'09:14:44',s:'engine',sc:'lse',tp:'MERGE',tc:'lmg',m:'JOIN + CRM: 2,937 tickets vinculados correctamente'},
+  {t:'09:14:45',s:'engine',sc:'lse',tp:'FIX',tc:'lfx',m:'Scoring calculado: 47 nivel ALTO · 89 MEDIO · 3,078 BAJO'},
+  {t:'09:14:46',s:'engine',sc:'lse',tp:'FIX',tc:'lfx',m:'18 campos enriquecidos: score_riesgo, canal_opt, causal_principal...'},
+  {t:'09:14:47',s:'engine',sc:'lse',tp:'INFO',tc:'lin',m:'✓ Pipeline completado · 3,214 registros limpios · 97.1% calidad · 14.3s'},
+];
+
+let deLogIdx = 0;
+
+function addDeLog(){
+  if(deLogIdx >= DE_LOGS.length) return;
+  const l = DE_LOGS[deLogIdx++];
+  const b = document.getElementById('de-log');
+  const el = document.createElement('div');
+  el.className = 'll';
+  el.innerHTML = `<span class="lt">${l.t}</span><span class="ls ${l.sc}">[${l.s}]</span><span class="ltp ${l.tc}">${l.tp}</span><span class="lm">${l.m}</span>`;
+  b.appendChild(el);
+  b.scrollTop = b.scrollHeight;
+  if(deLogIdx < DE_LOGS.length) setTimeout(addDeLog, 160);
+  else setTimeout(()=>{
+    document.getElementById('de-p3').style.display = 'block';
+    document.getElementById('de-p3').scrollIntoView({behavior:'smooth', block:'start'});
+    setDeStep(3);
+    toast('✓ Base limpia lista · 3,214 registros · 97.1% calidad');
+  }, 800);
+}
+
+function runDiag(){
+  document.getElementById('de-p2').style.display = 'block';
+  document.getElementById('de-p2').scrollIntoView({behavior:'smooth', block:'start'});
+  setDeStep(2);
+  setTimeout(addDeLog, 300);
+}
+
+function runClean(){
+  document.getElementById('de-log').innerHTML = '';
+  deLogIdx = 0;
+  document.getElementById('de-p3').style.display = 'none';
+  setDeStep(2);
+  setTimeout(addDeLog, 200);
+}
+
+function setDeStep(n){
+  for(let i=1;i<=3;i++){
+    const d = document.getElementById('ds'+i);
+    const num = d.querySelector('.dsn');
+    if(i < n){ d.className='ds done'; num.className='dsn dn-d'; num.textContent='✓'; }
+    else if(i === n){ d.className='ds act'; num.className='dsn dn-a'; num.textContent=i; }
+    else{ d.className='ds pend'; num.className='dsn dn-p'; num.textContent=i; }
+  }
+}
+
+function activarEnPersistia(){
+  // Navigate to Orquestación
+  const orcBtn = document.querySelector('.sb-i[onclick*="orc"]');
+  go('orc', orcBtn);
+  toast('✓ 47 estudiantes en alerta activados en bandeja de orquestación');
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+window.addEventListener('load',()=>{
+  renderQueue();
+  renderSegNav();
+  selSeg('g-alto-fin');
+  // Auto-seleccionar al primero de la cola
+  const primero = DB.filter(s=>s.estado==='sin_gestionar').sort((a,b)=>b.score-a.score)[0];
+  if(primero) selSt(primero.id);
+});
+</script>
+</body>
+</html>
